@@ -1,7 +1,5 @@
 <?php
 session_start();
-
-
 echo  $_SESSION['OTP'];
 
 if(isset($_POST['submit']))
