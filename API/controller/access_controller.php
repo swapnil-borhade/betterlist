@@ -9,6 +9,7 @@ function insertUser($pdo)
     $data_from_api = json_decode(file_get_contents('php://input'), true);
     $firstname = isset($data_from_api["FirstName"]) ? sanitize_data($data_from_api["FirstName"]) : '';
     $lastname = isset($data_from_api["LastName"]) ? sanitize_data($data_from_api["LastName"]) : '';
+    $mobile = isset($data_from_api["Mobile"]) ? sanitize_data($data_from_api["Mobile"]) : '';
     $emailid = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
     $password = isset($data_from_api["Password"]) ? $data_from_api["Password"] : '';
     $company = sanitize_data($data_from_api["Company"]);
@@ -28,6 +29,14 @@ function insertUser($pdo)
             "success" => false,
             "error" => true,
             "message" => "Last Name Can't be Empty.",
+        );
+    }
+    elseif(empty($mobile))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Mobile Can't be Empty.",
         );
     }
     elseif(!filter_var($emailid ?? '', FILTER_VALIDATE_EMAIL)) 
@@ -69,13 +78,13 @@ function insertUser($pdo)
             $data = array(
                 'firstname'=>$firstname,
                 'lastname'=>$lastname,
+                'mobile'=>$mobile,
                 'emailid'=>$emailid,
                 'password'=>password_hash($password, PASSWORD_BCRYPT,['cost' => 12]),
                 'company'=>$company,
                 'country'=>$countryname,
             );
-
-            $sqlinsertuser = "INSERT INTO `users`(`firstname`, `lastname`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:emailid,:password,:company,:country)";
+            $sqlinsertuser = "INSERT INTO `users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:password,:company,:country)";
             $stmtinsertuser = $pdo->prepare($sqlinsertuser);
             if($stmtinsertuser->execute($data))
             {

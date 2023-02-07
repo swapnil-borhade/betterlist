@@ -23,6 +23,12 @@ $(document).ready(function ()
                 required:true,
                 minlength:3
             },
+            mobile: {
+                required:true,
+                minlength:10,
+                maxlength: 10,
+                mobileValidation : true,
+            },
             email: {
                 required:true,
                 email:true,
@@ -50,7 +56,7 @@ $(document).ready(function ()
         {
             $.ajax({
                 type: "POST",
-                url:"register_controller.php",
+                url:"../controller/register_controller.php",
                 data:$("form[name=register_form_submit]").serialize(),           
                 dataType:"JSON",
                 success: function(response) 
@@ -87,7 +93,7 @@ $(document).ready(function ()
         {
             $.ajax({
                 type: "POST",
-                url:"register_controller.php",
+                url:"../controller/register_controller.php",
                 data:$("form[name=login_form_submit]").serialize(),           
                 dataType:"JSON",
                 success: function(response) 

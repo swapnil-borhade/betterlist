@@ -7,9 +7,7 @@ if(isset($_SESSION["login"]))
     header("Location:index.php");
 }
 
-include ('../api/controller/functions.php');
-define('baseUrl', 'https://code.hybclient.com/betterlist/API/');
-// define('baseUrl', 'http://localhost/swapnil/work/betterlist/API/');
+include ('../controller/functions.php');
 if(isset($_POST['submit']))
 {
     if($_POST['otp'] == $_SESSION['OTP'])

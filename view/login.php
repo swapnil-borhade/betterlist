@@ -1,5 +1,4 @@
 <?php
-include ('../api/controller/functions.php');
 session_start();
 
 if(isset($_SESSION["login"])) 

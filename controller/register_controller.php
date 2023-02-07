@@ -1,11 +1,9 @@
 <?php
 session_start();
 
-include ('../api/controller/functions.php');
+include ('functions.php');
 
-define('baseUrl', 'https://code.hybclient.com/betterlist/API/');
-// define('baseUrl', 'http://localhost/swapnil/work/betterlist/API/');
-// https://code.hybclient.com/betterlist/view/login.php
+
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 switch ($action) {
@@ -16,24 +14,17 @@ switch ($action) {
 
 function registeruser()
 {
-    $data = array(
-        "firstname" => sanitize_data($_POST['firstname']),
-        "lastname" => sanitize_data($_POST['lastname']),
-        "email" => $_POST['email'],
-        "password" => $_POST['password'],
-        "company" => sanitize_data($_POST['company']),
-        "country_name" => sanitize_data($_POST['country_name']),
-    );
     $curl = curl_init();
     $CURLOPT_URL = baseUrl.'register.php/userinfo';
     $CURLOPT_CUSTOMREQUEST = 'POST';
     $CURLOPT_POSTFIELDS = '{
-        "FirstName" : "'.$data['firstname'].'",
-        "LastName" : "'.$data['lastname'].'",
-        "EmailId" : "'.$data['email'].'",
-        "Password" : "'.$data['password'].'",
-        "Company" : "'.$data['company'].'",
-        "CountryName" : "'.$data['country_name'].'"
+        "FirstName" : "'.sanitize_data($_POST['firstname']).'",
+        "LastName" : "'.sanitize_data($_POST['lastname']).'",
+        "Mobile" : "'.sanitize_data($_POST['mobile']).'",
+        "EmailId" : "'.$_POST['email'].'",
+        "Password" : "'.$_POST['password'].'",
+        "Company" : "'.sanitize_data($_POST['company']).'",
+        "CountryName" : "'.sanitize_data($_POST['country_name']).'"
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
@@ -44,6 +35,10 @@ function registeruser()
         $_SESSION['userid'] = $response_array['data']['id'];
         $_SESSION['OTP'] = $response_array['data']['otp'];
     }
+    // else
+    // {
+    //     echo $response_array['message'];
+    // }
     echo $response;
 }
 

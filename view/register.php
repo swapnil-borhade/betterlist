@@ -1,5 +1,5 @@
 <?php
-include ('../api/controller/functions.php');
+include ('../controller/functions.php');
 session_start(); 
 
 if(isset($_SESSION["login"])) 
@@ -39,6 +39,10 @@ if(isset($_SESSION["login"]))
                         <div class="mb-3">
                             <label for="lastname" class="form-label">Last Name</label>
                             <input type="text" class="form-control" name ="lastname" id="lastname">
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobile" class="form-label">Mobile Number</label>
+                            <input type="text" class="form-control" name ="mobile" id="mobile">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email address</label>
