@@ -7,30 +7,14 @@ if(isset($_SESSION["login"]))
     header("Location:index.php");
 }
 
-include ('../controller/functions.php');
 if(isset($_POST['submit']))
 {
     if($_POST['otp'] == $_SESSION['OTP'])
     {
-        $userid =  $_SESSION['userid'];
-        $curl = curl_init();
-        $CURLOPT_URL = baseUrl.'register.php/verifyUserfromemail';
-        $CURLOPT_CUSTOMREQUEST = 'POST';
-        $CURLOPT_POSTFIELDS = '{
-            "userid" : "'.$userid.'"
-        }';
-        curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
-        $response = curl_exec($curl);
-        $response_arr = (json_decode($response,true));
-        if($response_arr['success']==true)
-        {
-            $_SESSION['login'] = true;
-            $_SESSION['OTP'] = '';
-            header('Location: index.php');
-            die();
-        }
-        else
-        { echo $response_arr['message']; }
+        $userid = $_SESSION['userid'];
+        $_SESSION['forgotPassword'] = "true";
+        header('Location: newpassword.php');
+        die();
     }
     else{ echo "not match otp"; }
 } ?>

@@ -22,6 +22,9 @@ if($response === 200)
 	{
 		case ($action == 'userinfo' && $method == 'POST'): insertUser($pdo); break;
 		case ($action == 'userinfo' && $method == 'GET'): getUser($pdo); break;
+
+		case ($action == 'frogotpassword' && $method == 'GET'): getforgetPassword($pdo); break;
+		case ($action == 'setnewpassword' && $method == 'POST'): setnewpassword($pdo); break;
 		
 		case ($action == 'verifyUserfromemail' && $method == 'POST'): verifyUserfromemail($pdo); break;
 		default: methodNotallowed(); break;

@@ -256,7 +256,7 @@ function getUser($pdo)
 function getforgetPassword($pdo)
 {
     $data_from_api = json_decode(file_get_contents("php://input"),true);
-    $email = isset($data_from_api["email"]) ? $data_from_api["email"] : '';
+    $email = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
 
     if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) 
     {
@@ -268,29 +268,24 @@ function getforgetPassword($pdo)
     else
     {
         $dataemailcheck = array(
-            "useremail"=> $email,
+            "emailid"=> $email,
             "is_active" => 1
         );
-
-        $emailcheck_sql ="SELECT userid,passwordEditValue FROM `tbl_users` WHERE useremail = :useremail and is_active = :is_active";
+        $emailcheck_sql ="SELECT id FROM `users` WHERE emailid = :emailid and is_active = :is_active";
         $stmtemailcheck = $pdo->prepare($emailcheck_sql);
         $stmtemailcheck->execute($dataemailcheck);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
-   
         if($resultemailcheck)
         {
-            $mailget_otp = forgotpasswordEmail($pdo,$resultemailcheck['userid'],$email);
-
-            $sql_update = "UPDATE `tbl_users` SET `passwordEditValue`= '".$mailget_otp."' WHERE userid = '".$resultemailcheck['userid']."'";
-            $stmtupdate= $pdo->prepare($sql_update);
-            $stmtupdate->execute();
+            $mailget_otp = forgotpasswordEmail($pdo,$resultemailcheck['id'],$email);
             
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
-                    "userid" => (int)$resultemailcheck['userid'],
-                    "useremail" => $email
+                    "id" => (int)$resultemailcheck['id'],
+                    "email" => $email,
+                    "otp" => $mailget_otp
                 )
             );
         }
@@ -374,13 +369,21 @@ function getforgetPasswordOTP($pdo)
     echo json_encode( $response);
 }
 
-function setNewPassword($pdo,$userid)
+function setnewpassword($pdo)
 {
     $data_from_api = json_decode(file_get_contents("php://input"),true);
+    $userid = isset($data_from_api["userid"]) ? $data_from_api["userid"] : '';
     $newpassword = isset($data_from_api["newpassword"]) ? $data_from_api["newpassword"] : '';
     $confirmpassword = isset($data_from_api["confirmpassword"]) ? $data_from_api["confirmpassword"] : '';
 
-    if(empty($newpassword) || strlen($newpassword) <= 7 || !preg_match("#[a-z]+#",$newpassword) || !preg_match("#[A-Z]+#",$newpassword) || !preg_match("#[0-9]+#",$newpassword) || !preg_match('/[\'£$%&*()}{@#~?><>,|=_+¬-]/',$newpassword))
+    if(empty($userid) || $userid == '')
+    {
+        $response = array(
+            "success" => false,
+            "message" => "can't empty id",
+        );
+    }
+    elseif(empty($newpassword) || strlen($newpassword) <= 7 || !preg_match("#[a-z]+#",$newpassword) || !preg_match("#[A-Z]+#",$newpassword) || !preg_match("#[0-9]+#",$newpassword) || !preg_match('/[\'£$%&*()}{@#~?><>,|=_+¬-]/',$newpassword))
 	{
         $response = array(
             "success" => false,
@@ -396,14 +399,13 @@ function setNewPassword($pdo,$userid)
     }
     else
     {
-        $data = array("userid"=> $userid);
         $datausercheck = array(
             "userpassword" => password_hash($newpassword, PASSWORD_BCRYPT,['cost' => 12]),
             "userid"=> $userid,
             "is_active" => 1
         );
 
-        $usercheck_sql ="UPDATE `tbl_users` SET `userpassword`=:userpassword, `passwordEditValue`= 0 WHERE userid = :userid and is_active = :is_active";
+        $usercheck_sql ="UPDATE `users` SET `password`=:userpassword WHERE id = :userid and is_active = :is_active";
         $stmtusercheck = $pdo->prepare($usercheck_sql);
         if($stmtusercheck->execute($datausercheck))
         {
