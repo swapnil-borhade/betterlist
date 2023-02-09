@@ -49,11 +49,10 @@ function setnewpassword()
     $response = curl_exec($curl);
     $response_array = json_decode($response, true);
     //print_r($response_array);
-    // if($response_array['success'] == true)
-    // {
-    //     $_SESSION['userid'] = $response_array['data']['id'];
-    //     $_SESSION['OTP'] = $response_array['data']['otp'];
-    // }
+    if($response_array['success'] == true)
+    {
+        $_SESSION['forgotPassword'] = '';
+    }
     echo $response;
 }
 

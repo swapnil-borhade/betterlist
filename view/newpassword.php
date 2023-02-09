@@ -6,6 +6,10 @@ if(isset($_SESSION["login"]))
 {
     header("Location:index.php");
 }
+elseif(!isset($_SESSION['forgotPassword']))
+{
+    header("Location:login.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

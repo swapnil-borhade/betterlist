@@ -301,74 +301,6 @@ function getforgetPassword($pdo)
     echo json_encode( $response);
 }
 
-function getforgetPasswordOTP($pdo)
-{
-    $data_from_api = json_decode(file_get_contents("php://input"),true);
-    $email = isset($data_from_api["email"]) ? $data_from_api["email"] : '';
-    $otp = isset($data_from_api["otp"]) ? $data_from_api["otp"] : '';
-
-    if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) 
-    {
-        $response = array(
-            "success" => false,
-            "message" => "Please enter the valid email id.",
-        );
-    }
-    else if (empty($otp)) 
-    {
-        $response = array(
-            "success" => false,
-            "message" => "Please enter the OTP.",
-        );
-    }
-    else
-    {
-        $dataemailcheck = array(
-            "useremail" => $email,
-            "is_active" => 1
-        );
-
-        $emailcheck_sql ="SELECT userid,passwordEditValue FROM `tbl_users` WHERE useremail = :useremail and is_active = :is_active";
-        $stmtemailcheck = $pdo->prepare($emailcheck_sql);
-        $stmtemailcheck->execute($dataemailcheck);
-        $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
-   
-        if($resultemailcheck)
-        {
-            if($resultemailcheck['passwordEditValue'] == $otp)
-            {
-                $response = array(
-                    "success" => true,
-                    "message" => "otp match.",
-                    "data" => array(
-                        "userid" => (int)$resultemailcheck['userid'],
-                        "useremail" => $email,
-                        "set_new_password_screen" => true,
-                    )
-                );
-            }
-            else
-            {
-                $response = array(
-                    "success" => false,
-                    "error" => true,
-                    "message" => "otp not match. please check your email account.",
-                );
-            }
-        }
-        else
-        {
-            $response = array(
-                "success" => false,
-                "error" => true,
-                "message" => "no email in database.",
-            );
-        }
-    }
-    header("HTTP/1.1 200 OK");
-    echo json_encode( $response);
-}
-
 function setnewpassword($pdo)
 {
     $data_from_api = json_decode(file_get_contents("php://input"),true);
@@ -426,4 +358,7 @@ function setnewpassword($pdo)
     header("HTTP/1.1 200 OK");
     echo json_encode($response);
 }
+
+
+
 ?>

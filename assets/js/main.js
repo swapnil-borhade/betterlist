@@ -111,4 +111,38 @@ $(document).ready(function ()
             });
         }
     });
+
+     //# forgot_password form submit js
+     $("form[name=forgotpassword_email_from]").validate({
+        errorElement: "span",
+        errorClass: "help-inline",
+        rules: {
+            email: {
+                required:true,
+                email:true,
+                emailExt:true
+            }
+        },
+        submitHandler: function(form) 
+        {
+            $.ajax({
+                type: "POST",
+                url:"../controller/register_controller.php",
+                data:$("form[name=forgotpassword_email_from]").serialize(),           
+                dataType:"JSON",
+                success: function(response) 
+                {
+                    console.log(response);
+                    if(response.success == false)
+                    {
+                        $("#show_server_error").html(response.message);
+                    }
+                    else if(response.success == true)
+                    {
+                        window.location.href = "forgotpasswordOTP.php";
+                    }
+                }
+            });
+        }
+    });
 });
