@@ -65,4 +65,18 @@ function getLoction()
     return json_decode($response,true);
 }
 
+function getuserinfo($userid)
+{
+    $curl = curl_init();
+    $CURLOPT_URL = baseUrl.'profile.php/userinfo';
+    $CURLOPT_CUSTOMREQUEST = 'GET';
+    $CURLOPT_POSTFIELDS = '{
+        "userid" : "'.$userid.'"
+    }';
+    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+    $response = curl_exec($curl);
+    return $response;
+}   
+
+
 ?>

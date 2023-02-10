@@ -38,7 +38,7 @@ function getUser($pdo)
 
             $response = array(
                 "success" => true,
-                "message" => "User not verified.",
+                "message" => "User found.",
                 "data" => $arr
             );
         }
@@ -65,44 +65,85 @@ function getUser($pdo)
 function updateUser($pdo)
 {
     $data_from_api = json_decode(file_get_contents("php://input"),true);
-    $email = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
+    $userid = isset($data_from_api["userid"]) ? sanitize_data($data_from_api["userid"]) : '';
+    $firstname = isset($data_from_api["firstname"]) ? sanitize_data($data_from_api["firstname"]) : '';
+    $lastname = isset($data_from_api["lastname"]) ? sanitize_data($data_from_api["lastname"]) : '';
+    $company = isset($data_from_api["company"]) ? sanitize_data($data_from_api["company"]) : '';
+    $address = isset($data_from_api["address"]) ? sanitize_data($data_from_api["address"]) : '';
+    $city = isset($data_from_api["city"]) ? sanitize_data($data_from_api["city"]) : '';
+    $country = isset($data_from_api["country"]) ? sanitize_data($data_from_api["country"]) : '';
 
-    if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) 
+    if (empty($firstname) || $firstname == '') 
     {
         $response = array(
             "success" => false,
-            "message" => "Please enter the valid email id.",
+            "message" => "Please enter firstname.",
+        );
+    }
+    elseif (empty($lastname) || $lastname == '') 
+    {
+        $response = array(
+            "success" => false,
+            "message" => "Please enter lastname.",
+        );
+    }
+    elseif (empty($country) || $country == '') 
+    {
+        $response = array(
+            "success" => false,
+            "message" => "Please enter country.",
         );
     }
     else
     {
-        $dataemailcheck = array(
-            "emailid"=> $email,
+        $data = array(
+            "id" => $userid,
+            "firstname"=> $firstname,
+            "lastname" => $lastname,
+            "company" => $company,
+            "address" => $address,
+            "city" => $city,
+            "country" => $country,
             "is_active" => 1
         );
-        $emailcheck_sql ="SELECT id FROM `users` WHERE emailid = :emailid and is_active = :is_active";
+
+        $data_check = array(
+            "id" => $userid,
+            "is_active" => 1,
+        );
+        $emailcheck_sql ="SELECT id FROM `users` WHERE id = :id and is_active = :is_active";
         $stmtemailcheck = $pdo->prepare($emailcheck_sql);
-        $stmtemailcheck->execute($dataemailcheck);
+        $stmtemailcheck->execute($data_check);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
         if($resultemailcheck)
         {
-            $mailget_otp = forgotpasswordEmail($pdo,$resultemailcheck['id'],$email);
-            
-            $response = array(
-                "success" => true,
-                "message" => "forgot password Email sent successfully.",
-                "data" => array(
-                    "id" => (int)$resultemailcheck['id'],
-                    "email" => $email,
-                    "otp" => $mailget_otp
-                )
-            );
+            $sql_update ="UPDATE `users` SET `firstname` = :firstname,`lastname` = :lastname,`company` = :company,`address` = :address,`city` = :city,`country` = :country WHERE id = :id and is_active = :is_active";
+            $stmt_update = $pdo->prepare($sql_update);
+            if($stmt_update->execute($data))
+            {
+                $response = array(
+                    "success" => true,
+                    "message" => "user updated successfully.",
+                    "data" => array(
+                        "userid" => $userid
+                    )
+                );
+            }
+            else
+            {
+                $response = array(
+                    "success" => false,
+                    "error" => true,
+                    "message" => "user not found.",
+                );
+            }
         }
         else
         {
             $response = array(
                 "success" => false,
-                "message" => "no email in database.",
+                "error" => true,
+                "message" => "user not found.",
             );
         }
     }
