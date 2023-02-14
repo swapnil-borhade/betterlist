@@ -1,18 +1,18 @@
 <?php
 
-/*localhost*/
+// ## localhost
 $hostname = "localhost";
 $username = "root";
 $password = "";
 $db="better_list";
 
-/*code.hybclinet*/
+// ## code.hybclinet
 // $hostname = "localhost";
-// $username = "";
-// $password = "";
-// $db="";
+// $username = "u886461235_betterlist";
+// $password = "Pass#@123";
+// $db="u886461235_betterlist";
 
-/*better list DATAbase*/ 
+// ## better list DATAbase 
 // $hostname = "localhost";
 // $username = "";
 // $password = ""; 
