@@ -40,9 +40,6 @@ include ('../controller/functions.php');
 
                     <?php 
                     $api_response = json_decode(getuserinfo($_SESSION['userid']),true);
-
-                    //print_r($api_response);
-
                     if($api_response['success'] == true)
                     {
                         $firstname = $api_response['data']['firstname']; 

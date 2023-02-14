@@ -60,7 +60,7 @@ if(isset($_SESSION["login"]))
                             <label for="company" class="form-label">Company</label>
                             <input type="text" class="form-control" name="company" id="company">
                         </div>
-                        <input type="hidden" name="country_name" value="<?php echo getLoction()['country'];?>">
+                        <input type="hidden" name="country_name" value="<?php echo getLoction()['geoplugin_countryName'];?>">
                         <input type="hidden" name="action" value="registeruser">
 
                         <a href="login.php" class="">login</a>
