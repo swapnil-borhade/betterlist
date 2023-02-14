@@ -106,8 +106,8 @@ $(document).ready(function ()
         }
     });
 
-     //# forgot_password form submit js
-     $("form[name=forgotpassword_email_from]").validate({
+    //# forgot_password form submit js
+    $("form[name=forgotpassword_email_from]").validate({
         errorElement: "span",
         errorClass: "help-inline",
         rules: {
@@ -139,4 +139,69 @@ $(document).ready(function ()
             });
         }
     });
+
+    //# profile_update form submit js
+    $("form[name=profile_page]").validate({
+        errorElement: "span",
+        errorClass: "help-inline",
+        rules: {
+            firstname: { 
+                required:true,
+                minlength:3
+            },
+            lastname: {
+                required:true,
+                minlength:3
+            },
+            mobile: {
+                required:true,
+                minlength:10,
+                maxlength: 10,
+                mobileValidation : true,
+            },
+            email: {
+                required:true,
+                email:true,
+                emailExt:true
+            },
+            company: {
+                required:false,
+                minlength:3
+            },
+            address: {
+                required:false,
+                minlength:3
+            },
+            city: {
+                required:false,
+                minlength:3
+            },
+            country: {
+                required:false,
+                minlength:3
+            },
+        },
+        submitHandler: function(form) 
+        {
+            $.ajax({
+                type: "POST",
+                url:"../controller/profile_controller.php",
+                data:$("form[name=profile_page]").serialize(),           
+                dataType:"JSON",
+                success: function(response) 
+                {
+                    console.log(response);
+                    if(response.success == false)
+                    {
+                        $("#show_server_error").html(response.message);
+                    }
+                    else if(response.success == true)
+                    {
+                        $("#show_server_error").html(response.message); 
+                    }
+                }
+            });
+        }
+    });
+
 });

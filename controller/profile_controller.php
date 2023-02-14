@@ -17,6 +17,7 @@ function updateuser()
         "userid" : "'.$_POST['userid'].'",
         "firstname": "'.$_POST['firstname'].'",
         "lastname": "'.$_POST['lastname'].'",
+        "mobile": "'.$_POST['mobile'].'",
         "company": "'.$_POST['company'].'",
         "address": "'.$_POST['address'].'",
         "city": "'.$_POST['city'].'",

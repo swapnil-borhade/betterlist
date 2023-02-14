@@ -68,6 +68,7 @@ function updateUser($pdo)
     $userid = isset($data_from_api["userid"]) ? sanitize_data($data_from_api["userid"]) : '';
     $firstname = isset($data_from_api["firstname"]) ? sanitize_data($data_from_api["firstname"]) : '';
     $lastname = isset($data_from_api["lastname"]) ? sanitize_data($data_from_api["lastname"]) : '';
+    $mobile = isset($data_from_api["mobile"]) ? sanitize_data($data_from_api["mobile"]) : '';
     $company = isset($data_from_api["company"]) ? sanitize_data($data_from_api["company"]) : '';
     $address = isset($data_from_api["address"]) ? sanitize_data($data_from_api["address"]) : '';
     $city = isset($data_from_api["city"]) ? sanitize_data($data_from_api["city"]) : '';
@@ -87,6 +88,14 @@ function updateUser($pdo)
             "message" => "Please enter lastname.",
         );
     }
+    elseif(empty($mobile))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Mobile Can't be Empty.",
+        );
+    }
     elseif (empty($country) || $country == '') 
     {
         $response = array(
@@ -100,6 +109,7 @@ function updateUser($pdo)
             "id" => $userid,
             "firstname"=> $firstname,
             "lastname" => $lastname,
+            "mobile" => $mobile,
             "company" => $company,
             "address" => $address,
             "city" => $city,
@@ -117,7 +127,7 @@ function updateUser($pdo)
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
         if($resultemailcheck)
         {
-            $sql_update ="UPDATE `users` SET `firstname` = :firstname,`lastname` = :lastname,`company` = :company,`address` = :address,`city` = :city,`country` = :country WHERE id = :id and is_active = :is_active";
+            $sql_update ="UPDATE `users` SET `firstname` = :firstname, `lastname` = :lastname, `mobile` = :mobile, `company` = :company, `address` = :address, `city` = :city, `country` = :country WHERE id = :id and is_active = :is_active";
             $stmt_update = $pdo->prepare($sql_update);
             if($stmt_update->execute($data))
             {
