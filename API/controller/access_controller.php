@@ -80,11 +80,11 @@ function insertUser($pdo)
                 'lastname'=>$lastname,
                 'mobile'=>$mobile,
                 'emailid'=>$emailid,
-                'password'=>password_hash($password, PASSWORD_BCRYPT,['cost' => 12]),
+                'new_password'=>password_hash($password, PASSWORD_BCRYPT,['cost' => 12]),
                 'company'=>$company,
                 'country'=>$countryname,
             );
-            $sqlinsertuser = "INSERT INTO `users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:password,:company,:country)";
+            $sqlinsertuser = "INSERT INTO `users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:new_password,:company,:country)";
             $stmtinsertuser = $pdo->prepare($sqlinsertuser);
             if($stmtinsertuser->execute($data))
             {
@@ -116,6 +116,9 @@ function insertUser($pdo)
                 "success" => false,
                 "error" => true,
                 "message" => "user already exists.",
+                "data" => array(
+                    'userid'=> $resultemailcheck['id']
+                )
             );
         }
     }

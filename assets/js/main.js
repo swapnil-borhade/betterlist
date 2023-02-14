@@ -45,14 +45,8 @@ $(document).ready(function ()
                 required:false,
                 minlength:3
             },
-            mobile: {
-                required:true,
-                minlength:10,
-                maxlength:10,
-                number:true
-            },
         },
-        submitHandler: function(form) 
+        submitHandler: function(form)
         {
             $.ajax({
                 type: "POST",

@@ -65,7 +65,7 @@ include ('../controller/functions.php');
                             </div>
                             <div class="mb-3">
                                 <label for="mobile" class="form-label">Mobile Number</label>
-                                <input type="text" class="form-control" name ="mobile" id="mobile" value="<?php echo $mobile;?>" disabled>
+                                <input type="text" class="form-control" name ="mobile" id="mobile" value="<?php echo $mobile;?>">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email ID</label>
