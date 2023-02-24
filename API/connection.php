@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set("UTC");
+
 // ## localhost
 $hostname = "localhost";
 $username = "root";

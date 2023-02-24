@@ -1,7 +1,7 @@
 <?php
 include("connection.php");
 include("auth.php");
-include("controller/profile_controller.php");
+include("controller/license_controller.php");
 
 //## check api Authorization
 $response = checkAuthorization();
@@ -20,8 +20,8 @@ if($response === 200)
 {
 	switch ($action)
 	{
-		case ($action == 'userinfo' && $method == 'GET'): getUser($pdo); break;
-		case ($action == 'userinfo' && $method == 'POST'): updateUser($pdo); break;
+		case ($action == 'licenseinfo' && $method == 'GET'): getLicense($pdo); break;
+		case ($action == 'licenseinfo' && $method == 'POST'): setLicense($pdo); break;
 	
 		default: methodNotallowed(); break;
 	}
