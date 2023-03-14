@@ -44,12 +44,10 @@ function getLicense($pdo)
         );
     }
 
-
     $data = array(
         "userid" => $userid,
         "is_active" => 1
     );
-
 
     $stmt = $pdo->prepare("SELECT COUNT(*) AS allcount FROM `tbl_license` WHERE `userid` = :userid and `is_active` = :is_active");
     $stmt->execute($data);
@@ -97,68 +95,6 @@ function getLicense($pdo)
         "aaData" => $data
     );
     echo json_encode($response);
-
-
-
-
-
-
-
-
-    // $datacheck = array(
-    //     'userid' => $userid,
-    //     'is_active' => 1
-    // );
-    // $sql = "SELECT * from `tbl_license` where userid = :userid and is_active = :is_active";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute($datacheck);
-    // $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // $today = date("Y-m-d H:i:s");
-
-    // if($result)
-    // {
-    //     foreach($result as $row)
-    //     {
-    //         if($row['end_date'] >= $today)
-    //         {
-    //             $response = array(
-    //                 "success" => true,
-    //                 "message" => "User key found.",
-    //                 "data" => array(
-    //                     "btn" => false,
-    //                     "btn_msg" => "Disable Generate key btn",
-    //                     "key" => $row['license_key']
-    //                 )
-    //             );
-    //             break;
-    //         }
-    //         else
-    //         {
-    //             $response = array(
-    //                 "success" => true,
-    //                 "message" => "User key not found.",
-    //                 "data" => array(
-    //                     "btn" => true,
-    //                     "btn_msg" => "Enable Generate key btn",
-    //                     "key" => NULL
-    //                 )
-    //             );
-    //         }
-    //     }
-    // }   
-    // else
-    // {
-    //     $response = array(
-    //         "success" => true,
-    //         "message" => "User key not found.",
-    //         "data" => array(
-    //             "btn" =>true,
-    //             "btn_msg" => "Enable Generate key btn",
-    //             "key" => NULL
-    //         )
-    //     );
-    // }
-    // echo json_encode($response);
 }
 
 function setLicense($pdo)
@@ -245,7 +181,6 @@ function setLicense($pdo)
     header("HTTP/1.1 200 OK");
     echo json_encode( $response);
 }
-
 
 function deleteLicense($pdo)
 {
