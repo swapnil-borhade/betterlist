@@ -276,7 +276,8 @@ $(document).ready(function ()
             {
                 if(response.success == true)
                 {
-                    window.location.href = "license.php";
+                    //window.location.href = "license.php";
+                    $('#table_license').DataTable().ajax.reload();
                 }
                 if(response.success == false)
                 {
