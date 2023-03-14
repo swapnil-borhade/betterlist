@@ -38,5 +38,7 @@ if(!isset($_SESSION["login"]))
             </div>
         </div>
     </section>
+
+    <?php include('../assets/includes/script-links.php'); ?>
 </body>
 </html>

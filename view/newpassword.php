@@ -53,49 +53,5 @@ elseif(!isset($_SESSION['forgotPassword']))
         </div>
     </section>
 	<?php include('../assets/includes/script-links.php');?>
-
-
-    <script type="text/javascript">
-        $(document).ready(function()
-        {
-            //# register form submit js
-            $("form[name=new_password_form_submit]").validate({
-                errorElement: "span",
-                errorClass: "help-inline",
-                rules: {
-                    password: {
-                        required: true,
-                        minlength: 8,
-                    },
-                    confirm_password: {
-                        required: true,
-                        minlength: 8,
-                        equalTo: "#password"
-                    }
-                },
-                submitHandler: function(form) 
-                {
-                    $.ajax({
-                        type: "POST",
-                        url:"../controller/register_controller.php",
-                        data:$("form[name=new_password_form_submit]").serialize(),           
-                        dataType:"JSON",
-                        success: function(response) 
-                        {
-                            console.log(response);
-                            if(response.success == false)
-                            {
-                                $("#show_server_error").html(response.message);
-                            }
-                            else if(response.success == true)
-                            {
-                                window.location.href = "login.php";
-                            }
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 </html>

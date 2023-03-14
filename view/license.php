@@ -40,7 +40,7 @@ if(!isset($_SESSION["login"]))
     </section>
     <section>
         <div class="container mt-5">
-            <table id="table_license" class="display" style="width:100%">
+            <table id="table_license" data-id="<?php echo $_SESSION['userid']?>" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -54,51 +54,5 @@ if(!isset($_SESSION["login"]))
 	    </div>
     </section>
     <?php include('../assets/includes/script-links.php');?>
-    <script type="text/javascript">
-		$(document).ready(function() 
-		{
-			$('#table_license').DataTable({
-				'processing': true,
-				'serverSide': true,
-				'serverMethod': 'post',
-				'ajax': {
-					'url':'../controller/license_controller.php',
-                    'type':'post',
-                    'data': {'userid':<?php echo $_SESSION['userid']?> ,'action': 'getlicenseinfo'},
-                    'dataType':'JSON',
-				},
-				'columns': [
-					{ data: 'id'},
-					{ data: 'website'},
-                    { data: 'license'},
-					{ data: 'start_date'},
-                    { data: 'end_date'}
-					// { data: 'action'}
-				]
-			});
-
-            $(document).on('click', '#generate_key_btn', function() 
-			{
-				var id = $(this).data('id');
-                $.ajax({
-                    type: "POST",
-                    url:"../controller/license_controller.php",
-                    data:{"userid": id,"action": "setlicenseinfo"},            
-                    dataType:"JSON",
-                    success: function(response) 
-                    {
-                        if(response.success == true)
-                        {
-                            window.location.href = "license.php";
-                        }
-                        if(response.success == false)
-                        {
-                            window.alert(response.message);
-                        }
-                    }
-                });
-			});
-		});
-	</script>
 </body>
 </html>
