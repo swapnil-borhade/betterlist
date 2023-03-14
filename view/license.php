@@ -40,7 +40,7 @@ if(!isset($_SESSION["login"]))
     </section>
     <section>
         <div class="container mt-5">
-            <table id="table_license" data-id="<?php echo $_SESSION['userid']?>" class="display" style="width:100%">
+            <table id="table_license" data-id="<?php echo $_SESSION['userid']?>">
                 <thead>
                     <tr>
                         <th>Id</th>
