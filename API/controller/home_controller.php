@@ -14,7 +14,7 @@ function getHomescreen($pdo)
         'is_active' => 1
     );
 
-    $sqlcheck = 'SELECT * FROM `users` WHERE `id`= :id and `is_active` = :is_active';
+    $sqlcheck = 'SELECT * FROM `tbl_users` WHERE `id`= :id and `is_active` = :is_active';
     $stmtcheck = $pdo->prepare($sqlcheck);
     $stmtcheck->execute($datacheck);
     $resultcheck = $stmtcheck->fetch(PDO::FETCH_ASSOC);

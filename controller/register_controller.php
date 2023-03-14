@@ -11,51 +11,6 @@ switch ($action) {
     default : header('Location: ../404.php'); 
 }
 
-function forgotpassword()
-{
-    $curl = curl_init();
-    $CURLOPT_URL = baseUrl.'register.php/frogotpassword';
-    $CURLOPT_CUSTOMREQUEST = 'GET';
-    $CURLOPT_POSTFIELDS = '{
-        "EmailId" : "'.$_POST['email'].'"
-    }';
-    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
-    $response = curl_exec($curl);
-    $response_array = json_decode($response, true);
-    // print_r($response_array);
-    if($response_array['success'] == true)
-    {
-        $_SESSION['userid'] = $response_array['data']['id'];
-        $_SESSION['OTP'] = $response_array['data']['otp'];
-    }
-    echo $response;
-}
-
-
-function setnewpassword()
-{
-    $curl = curl_init();
-    $CURLOPT_URL = baseUrl.'register.php/setnewpassword';
-    $CURLOPT_CUSTOMREQUEST = 'POST';
-    $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.$_POST['id'].'",
-        "newpassword" : "'.$_POST['password'].'",
-        "confirmpassword" : "'.$_POST['confirm_password'].'"
-    }';
-
-
-    //echo $CURLOPT_POSTFIELDS;
-    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
-    $response = curl_exec($curl);
-    $response_array = json_decode($response, true);
-    //print_r($response_array);
-    if($response_array['success'] == true)
-    {
-        $_SESSION['forgotPassword'] = '';
-    }
-    echo $response;
-}
-
 function registeruser()
 {
     $curl = curl_init();
@@ -101,5 +56,53 @@ function loginuser()
     }
     echo $response;
 }
+
+function forgotpassword()
+{
+    $curl = curl_init();
+    $CURLOPT_URL = baseUrl.'register.php/frogotpassword';
+    $CURLOPT_CUSTOMREQUEST = 'GET';
+    $CURLOPT_POSTFIELDS = '{
+        "EmailId" : "'.$_POST['email'].'"
+    }';
+    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+    $response = curl_exec($curl);
+    $response_array = json_decode($response, true);
+    // print_r($response_array);
+    if($response_array['success'] == true)
+    {
+        $_SESSION['userid'] = $response_array['data']['id'];
+        $_SESSION['OTP'] = $response_array['data']['otp'];
+    }
+    echo $response;
+}
+
+
+function setnewpassword()
+{
+    $curl = curl_init();
+    $CURLOPT_URL = baseUrl.'register.php/setnewpassword';
+    $CURLOPT_CUSTOMREQUEST = 'POST';
+    $CURLOPT_POSTFIELDS = '{
+        "userid" : "'.$_POST['id'].'",
+        "newpassword" : "'.$_POST['password'].'",
+        "confirmpassword" : "'.$_POST['confirm_password'].'"
+    }';
+
+
+    //echo $CURLOPT_POSTFIELDS;
+    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+    $response = curl_exec($curl);
+    $response_array = json_decode($response, true);
+    //print_r($response_array);
+    if($response_array['success'] == true)
+    {
+        $_SESSION['forgotPassword'] = '';
+    }
+    echo $response;
+}
+
+
+
 
 ?>

@@ -14,7 +14,7 @@ function getUser($pdo)
         'is_active' => 1
     );
 
-    $sql = "SELECT * from `users` where id = :id and is_active = :is_active";
+    $sql = "SELECT * from `tbl_users` where id = :id and is_active = :is_active";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($datacheck);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -121,13 +121,13 @@ function updateUser($pdo)
             "id" => $userid,
             "is_active" => 1,
         );
-        $emailcheck_sql ="SELECT id FROM `users` WHERE id = :id and is_active = :is_active";
+        $emailcheck_sql ="SELECT id FROM `tbl_users` WHERE id = :id and is_active = :is_active";
         $stmtemailcheck = $pdo->prepare($emailcheck_sql);
         $stmtemailcheck->execute($data_check);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
         if($resultemailcheck)
         {
-            $sql_update ="UPDATE `users` SET `firstname` = :firstname, `lastname` = :lastname, `mobile` = :mobile, `company` = :company, `address` = :address, `city` = :city, `country` = :country WHERE id = :id and is_active = :is_active";
+            $sql_update ="UPDATE `tbl_users` SET `firstname` = :firstname, `lastname` = :lastname, `mobile` = :mobile, `company` = :company, `address` = :address, `city` = :city, `country` = :country WHERE id = :id and is_active = :is_active";
             $stmt_update = $pdo->prepare($sql_update);
             if($stmt_update->execute($data))
             {

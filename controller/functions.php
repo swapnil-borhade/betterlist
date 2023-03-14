@@ -1,12 +1,10 @@
 <?php
 
-
 // ## code.hybclient server
 //define('baseUrl', 'https://code.hybclient.com/betterlist/api/');
 
 // ## localhost server
 define('baseUrl', 'http://localhost/swapnil/work/betterlist/api/');
-
 
 function sanitize_data($data)
 {
@@ -99,4 +97,16 @@ function get_client_ip()
     return $ipaddress;
 }
 
+function getLicense()
+{
+    $val_length = 16;
+    $result = '';
+    $module_length = 40;   // we use sha1, so module is 40 chars
+    $steps = round(($val_length/$module_length) + 0.5);
+    for( $i=0; $i<$steps; $i++ )
+    {
+        $result .= sha1(uniqid() . md5(rand()));
+    }
+    return substr($result, 0, $val_length);
+}
 ?>

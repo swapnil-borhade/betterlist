@@ -5,10 +5,8 @@ if(!isset($_SESSION["login"]))
 {
     header("Location:login.php");
 }
-
 include ('../controller/functions.php');
-//#function.php function created.
-
+//# function.php function created.
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +35,6 @@ include ('../controller/functions.php');
                     <?php include('../assets/includes/left-menu.php') ?> 
                 </div>
                 <div class="col-md-8">
-
                     <?php 
                     $api_response = json_decode(getuserinfo($_SESSION['userid']),true);
                     if($api_response['success'] == true)

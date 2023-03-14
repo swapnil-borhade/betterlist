@@ -69,7 +69,7 @@ function insertUser($pdo)
             'is_active' => 1
         );
 
-        $sqlemailcheck = 'SELECT `id` FROM `users` WHERE `emailid`= :emailid and `is_active` = :is_active';
+        $sqlemailcheck = 'SELECT `id` FROM `tbl_users` WHERE `emailid`= :emailid and `is_active` = :is_active';
         $stmtemailcheck = $pdo->prepare($sqlemailcheck);
         $stmtemailcheck->execute($dataemailcheck);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
@@ -84,7 +84,7 @@ function insertUser($pdo)
                 'company'=>$company,
                 'country'=>$countryname,
             );
-            $sqlinsertuser = "INSERT INTO `users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:new_password,:company,:country)";
+            $sqlinsertuser = "INSERT INTO `tbl_users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:new_password,:company,:country)";
             $stmtinsertuser = $pdo->prepare($sqlinsertuser);
             if($stmtinsertuser->execute($data))
             {
@@ -135,18 +135,39 @@ function verifyUserfromemail($pdo)
         "is_active" => 1
     );
 
-    $sql = "SELECT `id` FROM `users` where `id` = :userid and `is_active` = :is_active";
+    $sql = "SELECT `id` FROM `tbl_users` where `id` = :userid and `is_active` = :is_active";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($data);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    $today = date("Y-m-d H:i:s");
     // print_r($result);
     if($result)
     {
-        $sql_update_verify = "UPDATE `users` SET `is_verify`= '1' WHERE id = :userid and is_active = :is_active ";
+        $sql_update_verify = "UPDATE `tbl_users` SET `is_verify`= '1' WHERE id = :userid and is_active = :is_active ";
         $stmt_update_verify = $pdo->prepare($sql_update_verify);
         if($stmt_update_verify->execute($data))
         {
+            // # here add payment table to 1 year data
+            $end_date = date('Y-m-d H:i:s',strtotime('+365 days',strtotime($today)));
+            $insert_data = array(
+                "userid" => $userid,
+                "start_date" => $today,
+                "end_date" => $end_date
+            );
+            $insert_sql = "INSERT INTO `tbl_payment`(`userid`, `start_date`, `end_date`) VALUES (:userid, :start_date, :end_date)";
+            $insert_stmt = $pdo->prepare($insert_sql);
+            if($insert_stmt->execute($insert_data))
+            {
+                $insert_data_licences = array(
+                    "userid" => $userid,
+                    "license_key" => getlicensekey(),
+                    "start_date" => $today,
+                    "end_date" => $end_date
+                );
+                $insert_sql_licences = "INSERT INTO `tbl_license`(`userid`, `license_key`, `start_date`, `end_date`) VALUES (:userid, :license_key, :start_date, :end_date)";
+                $insert_stmt_licences = $pdo->prepare($insert_sql_licences);
+                $insert_stmt_licences->execute($insert_data_licences);
+            }
             $response = array(
                 "success" => true,
                 "message" => "User verify successfully.",
@@ -203,7 +224,7 @@ function getUser($pdo)
             'is_active' => 1
         );
 
-        $sql = "SELECT * from `users` where emailid = :emailid and is_active = :is_active";
+        $sql = "SELECT * from `tbl_users` where emailid = :emailid and is_active = :is_active";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($datacheck);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -274,7 +295,7 @@ function getforgetPassword($pdo)
             "emailid"=> $email,
             "is_active" => 1
         );
-        $emailcheck_sql ="SELECT id FROM `users` WHERE emailid = :emailid and is_active = :is_active";
+        $emailcheck_sql ="SELECT id FROM `tbl_users` WHERE emailid = :emailid and is_active = :is_active";
         $stmtemailcheck = $pdo->prepare($emailcheck_sql);
         $stmtemailcheck->execute($dataemailcheck);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
@@ -340,7 +361,7 @@ function setnewpassword($pdo)
             "is_active" => 1
         );
 
-        $usercheck_sql ="UPDATE `users` SET `password`=:userpassword WHERE id = :userid and is_active = :is_active";
+        $usercheck_sql ="UPDATE `tbl_users` SET `password`=:userpassword WHERE id = :userid and is_active = :is_active";
         $stmtusercheck = $pdo->prepare($usercheck_sql);
         if($stmtusercheck->execute($datausercheck))
         {

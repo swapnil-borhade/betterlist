@@ -33,7 +33,17 @@ if(!isset($_SESSION["login"]))
                     <?php include('../assets/includes/left-menu.php') ?> 
                 </div>
                 <div class="col-md-8">
-            
+                    <form>
+                        <select>
+                            
+                            <option></option>
+                            <option></option>
+                            <option></option>
+                            <option></option>
+                            <option></option>
+                            <option></option>
+                        </select>
+                    </form>
                 </div>
             </div>
         </div>

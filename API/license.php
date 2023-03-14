@@ -22,6 +22,7 @@ if($response === 200)
 	{
 		case ($action == 'licenseinfo' && $method == 'GET'): getLicense($pdo); break;
 		case ($action == 'licenseinfo' && $method == 'POST'): setLicense($pdo); break;
+		case ($action == 'licenseinfo' && $method == 'DELETE'): deleteLicense($pdo); break;
 	
 		default: methodNotallowed(); break;
 	}
