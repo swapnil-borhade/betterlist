@@ -89,15 +89,14 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data))
             {
                 $id = $pdo->lastInsertId();
-                $otp = verifyEmail($pdo,$id,$emailid);
+                welcomeEmail($id,$emailid);
 
                 $response = array(
                     "success" => true,
-                    "message" => "data inserted successfully.",
+                    "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid, 
-                        'otp'=>$otp
+                        'emailid'=>$emailid
                     )
                 );
             }
@@ -126,75 +125,75 @@ function insertUser($pdo)
     echo json_encode($response);
 }
 
-function verifyUserfromemail($pdo)
-{
-    $data_from_api = json_decode(file_get_contents('php://input'), true);
-    $userid = isset($data_from_api["userid"]) ? sanitize_data($data_from_api["userid"]) : '';
-    $data = array(
-        "userid" => $userid,
-        "is_active" => 1
-    );
+// function verifyUserfromemail($pdo)
+// {
+//     $data_from_api = json_decode(file_get_contents('php://input'), true);
+//     $userid = isset($data_from_api["userid"]) ? sanitize_data($data_from_api["userid"]) : '';
+//     $data = array(
+//         "userid" => $userid,
+//         "is_active" => 1
+//     );
 
-    $sql = "SELECT `id` FROM `tbl_users` where `id` = :userid and `is_active` = :is_active";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($data);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $today = date("Y-m-d H:i:s");
-    // print_r($result);
-    if($result)
-    {
-        $sql_update_verify = "UPDATE `tbl_users` SET `is_verify`= '1' WHERE id = :userid and is_active = :is_active ";
-        $stmt_update_verify = $pdo->prepare($sql_update_verify);
-        if($stmt_update_verify->execute($data))
-        {
-            // # here add payment table to 1 year data
-            $end_date = date('Y-m-d H:i:s',strtotime('+365 days',strtotime($today)));
-            $insert_data = array(
-                "userid" => $userid,
-                "start_date" => $today,
-                "end_date" => $end_date
-            );
-            $insert_sql = "INSERT INTO `tbl_payment`(`userid`, `start_date`, `end_date`) VALUES (:userid, :start_date, :end_date)";
-            $insert_stmt = $pdo->prepare($insert_sql);
-            if($insert_stmt->execute($insert_data))
-            {
-                $insert_data_licences = array(
-                    "userid" => $userid,
-                    "license_key" => getlicensekey(),
-                    "start_date" => $today,
-                    "end_date" => $end_date
-                );
-                $insert_sql_licences = "INSERT INTO `tbl_license`(`userid`, `license_key`, `start_date`, `end_date`) VALUES (:userid, :license_key, :start_date, :end_date)";
-                $insert_stmt_licences = $pdo->prepare($insert_sql_licences);
-                $insert_stmt_licences->execute($insert_data_licences);
-            }
-            $response = array(
-                "success" => true,
-                "message" => "User verify successfully.",
-                "data" => NULL
-            );
-        }
-        else
-        {
-            $response = array(
-                "success" => false,
-                "error" => true,
-                "message" => "User verify not successfully. pls try again",
-                "data" => NULL
-            );
-        }
-    }
-    else
-    {
-        $response = array(
-            "success" => false,
-            "error" => true,
-            "message" => "User not found. pls try again",
-            "data" => NULL
-        );
-    }
-    echo json_encode($response);
-}
+//     $sql = "SELECT `id` FROM `tbl_users` where `id` = :userid and `is_active` = :is_active";
+//     $stmt = $pdo->prepare($sql);
+//     $stmt->execute($data);
+//     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+//     $today = date("Y-m-d H:i:s");
+//     // print_r($result);
+//     if($result)
+//     {
+//         $sql_update_verify = "UPDATE `tbl_users` SET `is_verify`= '1' WHERE id = :userid and is_active = :is_active ";
+//         $stmt_update_verify = $pdo->prepare($sql_update_verify);
+//         if($stmt_update_verify->execute($data))
+//         {
+//             // # here add payment table to 1 year data
+//             $end_date = date('Y-m-d H:i:s',strtotime('+365 days',strtotime($today)));
+//             $insert_data = array(
+//                 "userid" => $userid,
+//                 "start_date" => $today,
+//                 "end_date" => $end_date
+//             );
+//             $insert_sql = "INSERT INTO `tbl_payment`(`userid`, `start_date`, `end_date`) VALUES (:userid, :start_date, :end_date)";
+//             $insert_stmt = $pdo->prepare($insert_sql);
+//             if($insert_stmt->execute($insert_data))
+//             {
+//                 $insert_data_licences = array(
+//                     "userid" => $userid,
+//                     "license_key" => getlicensekey(),
+//                     "start_date" => $today,
+//                     "end_date" => $end_date
+//                 );
+//                 $insert_sql_licences = "INSERT INTO `tbl_license`(`userid`, `license_key`, `start_date`, `end_date`) VALUES (:userid, :license_key, :start_date, :end_date)";
+//                 $insert_stmt_licences = $pdo->prepare($insert_sql_licences);
+//                 $insert_stmt_licences->execute($insert_data_licences);
+//             }
+//             $response = array(
+//                 "success" => true,
+//                 "message" => "User verify successfully.",
+//                 "data" => NULL
+//             );
+//         }
+//         else
+//         {
+//             $response = array(
+//                 "success" => false,
+//                 "error" => true,
+//                 "message" => "User verify not successfully. pls try again",
+//                 "data" => NULL
+//             );
+//         }
+//     }
+//     else
+//     {
+//         $response = array(
+//             "success" => false,
+//             "error" => true,
+//             "message" => "User not found. pls try again",
+//             "data" => NULL
+//         );
+//     }
+//     echo json_encode($response);
+// }
 
 function getUser($pdo)
 {
@@ -223,12 +222,10 @@ function getUser($pdo)
             'emailid' => $emailid,
             'is_active' => 1
         );
-
         $sql = "SELECT * from `tbl_users` where emailid = :emailid and is_active = :is_active";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($datacheck);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
         if($result)
         {
             //## if user verified then login Scenario 
@@ -281,7 +278,6 @@ function getforgetPassword($pdo)
 {
     $data_from_api = json_decode(file_get_contents("php://input"),true);
     $email = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
-
     if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) 
     {
         $response = array(
@@ -299,17 +295,16 @@ function getforgetPassword($pdo)
         $stmtemailcheck = $pdo->prepare($emailcheck_sql);
         $stmtemailcheck->execute($dataemailcheck);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
+
         if($resultemailcheck)
         {
-            $mailget_otp = forgotpasswordEmail($pdo,$resultemailcheck['id'],$email);
-            
+            forgotpasswordEmail($resultemailcheck['id'],$email);
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
                     "id" => (int)$resultemailcheck['id'],
-                    "email" => $email,
-                    "otp" => $mailget_otp
+                    "email" => $email
                 )
             );
         }
@@ -331,7 +326,6 @@ function setnewpassword($pdo)
     $userid = isset($data_from_api["userid"]) ? $data_from_api["userid"] : '';
     $newpassword = isset($data_from_api["newpassword"]) ? $data_from_api["newpassword"] : '';
     $confirmpassword = isset($data_from_api["confirmpassword"]) ? $data_from_api["confirmpassword"] : '';
-
     if(empty($userid) || $userid == '')
     {
         $response = array(
@@ -382,7 +376,4 @@ function setnewpassword($pdo)
     header("HTTP/1.1 200 OK");
     echo json_encode($response);
 }
-
-
-
 ?>

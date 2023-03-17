@@ -1,5 +1,11 @@
 <?php
 
+//#localhost
+define('siteUrl', 'http://localhost/swapnil/work/betterlist/view/');
+
+//# code.hybclient.com
+// define('siteUrl', 'https://code.hybclient.com/betterlist/view/');
+
 function sanitize_data($data)
 {
     $data = trim($data);
@@ -7,6 +13,27 @@ function sanitize_data($data)
     $data = strip_tags($data);
     $data = htmlspecialchars($data);
     return $data;
+}
+
+function encryp($id)
+{
+	$ciphering = "AES-128-CTR";
+	$iv_length = openssl_cipher_iv_length($ciphering);
+	$options = 0;
+	$encryption_iv = '1234567891011121';
+	$encryption_key = "hybreed";
+	$encryption = openssl_encrypt($id, $ciphering, $encryption_key, $options, $encryption_iv);
+	return $encryption;
+}
+
+function decryp($id)
+{
+	$ciphering = "AES-128-CTR";
+	$options = 0;
+	$decryption_iv = '1234567891011121';
+	$decryption_key = "hybreed";
+	$decryption = openssl_decrypt($id, $ciphering, $decryption_key, $options, $decryption_iv);
+	return $decryption;
 }
 
 function timezone($time,$timezone)
@@ -21,44 +48,58 @@ function timezone($time,$timezone)
     return ($timezone_array);
 }
 
-function verifyEmail($pdo,$id,$email)
+function welcomeEmail($userid,$email)
 {
-    $chars ="0123456789";
-    $random_number = substr(str_shuffle( $chars ), 0, 4 );
+	$userid = encryp($userid);
+    $time = encryp(time());
+	$url = siteUrl."confirmemail.php?id=$userid&time=$time";
 	$to = $email;
-	$subject = "FBSM OTP: ".$random_number;
+	$subject = "Confirm Email.";
+
 	$message = "<html>
+		<head>
+			<title>HTML email</title>
+		</head>
 		<body>
-			<p>The OTP for register is ".$random_number.".</p>
+			<p>Verify your Email Id. <a href='".$url."' targel='_blank'>Click here</a> to Verify</p>
 		</body>
 	</html>";
+
 	//### Always set content-type when sending HTML email
     $headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
-	// mail($to,$subject,$message,$headers);
-	return $random_number;
+
+	if(mail($to,$subject,$message,$headers))
+	{
+	    return 1;
+	}
 }
 
-function forgotpasswordEmail($pdo,$id,$email)
+function forgotpasswordEmail($id,$email)
 {
-    $chars ="0123456789";
-    $random_number = substr(str_shuffle( $chars ), 0, 4 );
+	$userid = encryp($id);
+    $time = encryp(time());
+	$url = siteUrl."forgotpasswordemail.php?id=$userid&time=$time";
 	$to = $email;
-	$subject = "FBSM OTP: ".$random_number;
+	$subject = "Forgot password Email.";
+
 	$message = "<html>
+		<head>
+			<title>HTML email</title>
+		</head>
 		<body>
-			<p>The OTP for reset password is ".$random_number.".</p>
+			<p>Verify your Email Id. <a href='".$url."' targel='_blank'>Click here</a> to Verify</p>
 		</body>
 	</html>";
+
 	//### Always set content-type when sending HTML email
     $headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
-	// mail($to,$subject,$message,$headers);
-	return $random_number;
+	mail($to,$subject,$message,$headers);
 }
 
 function getlicensekey()
@@ -73,4 +114,22 @@ function getlicensekey()
     }
     return substr($result, 0, $val_length);
 }
+
+function getUrl()
+{
+    if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+        $url = "https://";   
+    else  
+        $url = "http://";   
+        
+    // Append the host(domain name, ip) to the URL.   
+    $url.= $_SERVER['HTTP_HOST'];   
+    
+    // Append the requested resource location to the URL   
+    $url.= $_SERVER['REQUEST_URI'];    
+      
+    return $url;
+}
+
+
 ?>

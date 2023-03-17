@@ -43,41 +43,13 @@ function timezone($time,$timezone)
 {
     $objDateTime = new DateTime($time);
     $timezone_array["UTC"] = $objDateTime->format('Y-m-d H:i:s');
-
     $objDateTimeZone = new DateTimeZone($timezone);
     $objDateTime->setTimeZone($objDateTimeZone);
-
     $timezone_array["local_time"] = $objDateTime->format('Y-m-d H:i:s');
     return ($timezone_array);
 }
 
 function getLoction()
-{
-    $ipadr = get_client_ip();
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'http://www.geoplugin.net/json.gp?ip='.$ipadr,
-        CURLOPT_RETURNTRANSFER => true,
-    ));
-    $response = curl_exec($curl);
-    curl_close($curl);
-    return json_decode($response,true);
-}
-
-function getuserinfo($userid)
-{
-    $curl = curl_init();
-    $CURLOPT_URL = baseUrl.'profile.php/userinfo';
-    $CURLOPT_CUSTOMREQUEST = 'GET';
-    $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.$userid.'"
-    }';
-    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
-    $response = curl_exec($curl);
-    return $response;
-}   
-
-function get_client_ip() 
 {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))
@@ -94,6 +66,42 @@ function get_client_ip()
         $ipaddress = getenv('REMOTE_ADDR');
     else
         $ipaddress = 'UNKNOWN';
-    return $ipaddress;
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'http://www.geoplugin.net/json.gp?ip='.$ipaddress,
+        CURLOPT_RETURNTRANSFER => true,
+    ));
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return json_decode($response,true);
+}
+
+//# home screen data
+function getHomeScreen()
+{
+    $curl = curl_init();
+    $CURLOPT_URL = baseUrl.'home.php/homescreen';
+    $CURLOPT_CUSTOMREQUEST = 'GET';
+    $CURLOPT_POSTFIELDS = '{
+        "userid" : "'.$_SESSION['userid'].'"
+    }';
+    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+    $response = curl_exec($curl);
+    return $response;
+}
+
+//# profile page data
+function getuserinfo($userid)
+{
+    $curl = curl_init();
+    $CURLOPT_URL = baseUrl.'profile.php/userinfo';
+    $CURLOPT_CUSTOMREQUEST = 'GET';
+    $CURLOPT_POSTFIELDS = '{
+        "userid" : "'.$userid.'"
+    }';
+    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+    $response = curl_exec($curl);
+    return $response;
 }
 ?>

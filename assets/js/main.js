@@ -1,7 +1,7 @@
 
 $(document).ready(function ()
 {
-    // var isReqInprogress = false;
+    //# methods
     $.validator.addMethod("emailExt", function(value, element, param) {
         return value.match(/^[a-zA-Z0-9_\.%\+\-]+@[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,}$/);
     },"Your email id is not correct format");
@@ -62,7 +62,7 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "registerOTP.php";
+                        window.location.href = "thankyou.php";
                     }
                 }
             });
@@ -133,7 +133,8 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "forgotpasswordOTP.php";
+                        window.location.href = "forgotpasswordthankyou.php";
+                        //console.log(response.data);
                     }
                 }
             });
@@ -243,7 +244,7 @@ $(document).ready(function ()
     });
 
     //# license page js
-    var userid = $('#table_license').data('id');   
+    var userid = $('#table_license').data('id');
     $('#table_license').DataTable({
         'processing': true,
         'serverSide': true,

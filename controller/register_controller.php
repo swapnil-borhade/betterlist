@@ -8,7 +8,7 @@ switch ($action) {
     case 'loginuser' : loginuser(); break;
     case 'forgot_password_email' : forgotpassword(); break;
     case 'setnewpassword' : setnewpassword(); break;
-    default : header('Location: ../404.php'); 
+    default : header('Location: ../404.php');
 }
 
 function registeruser()
@@ -27,13 +27,6 @@ function registeruser()
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
-    $response_array = json_decode($response, true);
-
-    if($response_array['success'] == true)
-    {
-        $_SESSION['userid'] = $response_array['data']['id'];
-        $_SESSION['OTP'] = $response_array['data']['otp'];
-    }
     echo $response;
 }
 
@@ -67,13 +60,6 @@ function forgotpassword()
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
-    $response_array = json_decode($response, true);
-    // print_r($response_array);
-    if($response_array['success'] == true)
-    {
-        $_SESSION['userid'] = $response_array['data']['id'];
-        $_SESSION['OTP'] = $response_array['data']['otp'];
-    }
     echo $response;
 }
 
@@ -87,16 +73,12 @@ function setnewpassword()
         "newpassword" : "'.$_POST['password'].'",
         "confirmpassword" : "'.$_POST['confirm_password'].'"
     }';
-
-
-    //echo $CURLOPT_POSTFIELDS;
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
     $response_array = json_decode($response, true);
-    //print_r($response_array);
     if($response_array['success'] == true)
     {
-        $_SESSION['forgotPassword'] = '';
+        unset($_SESSION['forgotPassword']);
     }
     echo $response;
 }
