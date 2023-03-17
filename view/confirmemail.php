@@ -2,6 +2,7 @@
 date_default_timezone_set("UTC");
 session_start();
 include('../api/connection.php');
+include('../controller/functions.php');
 
 confirmEmailid($pdo);
 // confirm Email ID
@@ -84,7 +85,7 @@ function confirmEmailid($pdo)
 
     if($response['success']==true)
     {
-		$_SESSION['userid'] = $userid;
+		$_SESSION['userid'] = encryp($userid);
         $_SESSION['login'] = true;
         header('Location: index.php');
         die();
@@ -93,16 +94,6 @@ function confirmEmailid($pdo)
     { 
         echo $response['message']; 
     }
-}
-
-function decryp($id)
-{
-	$ciphering = "AES-128-CTR";
-	$options = 0;
-	$decryption_iv = '1234567891011121';
-	$decryption_key = "hybreed";
-	$decryption = openssl_decrypt($id, $ciphering, $decryption_key, $options, $decryption_iv);
-	return $decryption;
 }
 
 function getlicensekey()

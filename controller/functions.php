@@ -1,7 +1,7 @@
 <?php
 
 // ## code.hybclient server
-//define('baseUrl', 'https://code.hybclient.com/betterlist/api/');
+// define('baseUrl', 'https://code.hybclient.com/betterlist/api/');
 
 // ## localhost server
 define('baseUrl', 'http://localhost/swapnil/work/betterlist/api/');
@@ -77,6 +77,27 @@ function getLoction()
     return json_decode($response,true);
 }
 
+function encryp($id)
+{
+	$ciphering = "AES-128-CTR";
+	$iv_length = openssl_cipher_iv_length($ciphering);
+	$options = 0;
+	$encryption_iv = '1234567891011121';
+	$encryption_key = "hybreed";
+	$encryption = openssl_encrypt($id, $ciphering, $encryption_key, $options, $encryption_iv);
+	return $encryption;
+}
+
+function decryp($id)
+{
+	$ciphering = "AES-128-CTR";
+	$options = 0;
+	$decryption_iv = '1234567891011121';
+	$decryption_key = "hybreed";
+	$decryption = openssl_decrypt($id, $ciphering, $decryption_key, $options, $decryption_iv);
+	return $decryption;
+}
+
 //# home screen data
 function getHomeScreen()
 {
@@ -84,7 +105,7 @@ function getHomeScreen()
     $CURLOPT_URL = baseUrl.'home.php/homescreen';
     $CURLOPT_CUSTOMREQUEST = 'GET';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.$_SESSION['userid'].'"
+        "userid" : "'.decryp($_SESSION['userid']).'"
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);

@@ -36,7 +36,7 @@ include ('../controller/functions.php');
                 </div>
                 <div class="col-md-8">
                     <?php 
-                    $api_response = json_decode(getuserinfo($_SESSION['userid']),true);
+                    $api_response = json_decode(getuserinfo(decryp($_SESSION['userid'])),true);
                     if($api_response['success'] == true)
                     {
                         $firstname = $api_response['data']['firstname']; 

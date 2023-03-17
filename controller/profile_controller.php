@@ -14,7 +14,7 @@ function updateuser()
     $CURLOPT_URL = baseUrl.'profile.php/userinfo';
     $CURLOPT_CUSTOMREQUEST = 'POST';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.$_POST['userid'].'",
+        "userid" : "'.decryp($_POST['userid']).'",
         "firstname": "'.$_POST['firstname'].'",
         "lastname": "'.$_POST['lastname'].'",
         "mobile": "'.$_POST['mobile'].'",

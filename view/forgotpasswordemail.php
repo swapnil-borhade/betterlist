@@ -2,6 +2,7 @@
 date_default_timezone_set("UTC");
 session_start();
 include('../api/connection.php');
+include('../controller/functions.php');
 
 forgotPasswordEmail($pdo);
 // confirm Email ID
@@ -62,7 +63,7 @@ function forgotPasswordEmail($pdo)
 
     if($response['success']==true)
     {
-		$_SESSION['userid'] = $userid;
+		$_SESSION['userid'] = encryp($userid);
         $_SESSION['forgotPassword'] = true;
         header('Location: newpassword.php');
         die();
@@ -73,26 +74,4 @@ function forgotPasswordEmail($pdo)
     }
 }
 
-function decryp($id)
-{
-	$ciphering = "AES-128-CTR";
-	$options = 0;
-	$decryption_iv = '1234567891011121';
-	$decryption_key = "hybreed";
-	$decryption = openssl_decrypt($id, $ciphering, $decryption_key, $options, $decryption_iv);
-	return $decryption;
-}
-
-function getlicensekey()
-{
-    $val_length = 16;
-    $result = '';
-    $module_length = 40;   // we use sha1, so module is 40 chars
-    $steps = round(($val_length/$module_length) + 0.5);
-    for( $i=0; $i<$steps; $i++ )
-    {
-        $result .= sha1(uniqid() . md5(rand()));
-    }
-    return substr($result, 0, $val_length);
-}
 ?>

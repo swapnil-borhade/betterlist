@@ -18,7 +18,7 @@ function getlicenseinfo()
     $CURLOPT_URL = baseUrl.'license.php/licenseinfo';
     $CURLOPT_CUSTOMREQUEST = 'GET';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.sanitize_data($_POST['userid']).'",
+        "userid" : "'.sanitize_data(decryp($_POST['userid'])).'",
         "draw" : "'.$_POST['draw'].'",
         "row" : "'.$_POST['start'].'",
         "rowperpage" : "'.$_POST['length'].'",
@@ -37,7 +37,7 @@ function setlicenseinfo()
     $CURLOPT_URL = baseUrl.'license.php/licenseinfo';
     $CURLOPT_CUSTOMREQUEST = 'POST';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.sanitize_data($_POST['userid']).'"
+        "userid" : "'.sanitize_data(decryp($_POST['userid'])).'"
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
@@ -50,7 +50,7 @@ function deleteLicense()
     $CURLOPT_URL = baseUrl.'license.php/licenseinfo';
     $CURLOPT_CUSTOMREQUEST = 'DELETE';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.sanitize_data($_POST['userid']).'",
+        "userid" : "'.sanitize_data(decryp($_POST['userid'])).'",
         "licenseid" : "'.sanitize_data($_POST['licenseid']).'"
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);

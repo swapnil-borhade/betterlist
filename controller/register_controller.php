@@ -44,7 +44,7 @@ function loginuser()
     $response_array = json_decode($response, true);
     if($response_array['success'] == true)
     {
-        $_SESSION['userid'] = $response_array['data']['id'];
+        $_SESSION['userid'] = encryp($response_array['data']['id']);
         $_SESSION['login'] = true;
     }
     echo $response;
@@ -69,7 +69,7 @@ function setnewpassword()
     $CURLOPT_URL = baseUrl.'register.php/setnewpassword';
     $CURLOPT_CUSTOMREQUEST = 'POST';
     $CURLOPT_POSTFIELDS = '{
-        "userid" : "'.$_POST['id'].'",
+        "userid" : "'.decryp($_POST['id']).'",
         "newpassword" : "'.$_POST['password'].'",
         "confirmpassword" : "'.$_POST['confirm_password'].'"
     }';
