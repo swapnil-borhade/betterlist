@@ -99,7 +99,7 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "index.php";
+                        window.location.href = "dashboard.php";
                     }
                 }
             });

@@ -87,7 +87,7 @@ function confirmEmailid($pdo)
     {
 		$_SESSION['userid'] = encryp($userid);
         $_SESSION['login'] = true;
-        header('Location: index.php');
+        header('Location: dashboard.php');
         die();
     }
     else

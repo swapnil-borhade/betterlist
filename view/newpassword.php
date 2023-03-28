@@ -4,7 +4,7 @@ session_start();
 
 if(isset($_SESSION["login"])) 
 {
-    header("Location:index.php");
+    header("Location:dashboard.php");
 }
 elseif(!isset($_SESSION['forgotPassword']))
 {

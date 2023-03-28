@@ -4,9 +4,7 @@ if(!isset($_SESSION["login"]))
 {
     header("Location:login.php");
 }
-
 include ('../controller/functions.php');
-
 $response = getHomeScreen();
 $response_arr = json_decode($response, true);
 if($response_arr['success']==true)
