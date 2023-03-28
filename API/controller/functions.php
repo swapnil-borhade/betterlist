@@ -71,10 +71,8 @@ function welcomeEmail($userid,$email)
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
 
-	if(mail($to,$subject,$message,$headers))
-	{
-	    return 1;
-	}
+	return $url;
+	//mail($to,$subject,$message,$headers);
 }
 
 function forgotpasswordEmail($id,$email)
@@ -99,7 +97,9 @@ function forgotpasswordEmail($id,$email)
 	$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
-	mail($to,$subject,$message,$headers);
+
+	return $url;
+	//mail($to,$subject,$message,$headers);
 }
 
 function getlicensekey()

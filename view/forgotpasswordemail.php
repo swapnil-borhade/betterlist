@@ -39,7 +39,7 @@ function forgotPasswordEmail($pdo)
                 $response = array(
                     "success" => false,
                     "error" => true,
-                    "message" => "user not verified.",
+                    "message" => "user not verified. plz register again",
                 );
             }
         }

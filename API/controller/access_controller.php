@@ -9,9 +9,7 @@ function insertUser($pdo)
     $data_from_api = json_decode(file_get_contents('php://input'), true);
     $firstname = isset($data_from_api["FirstName"]) ? sanitize_data($data_from_api["FirstName"]) : '';
     $lastname = isset($data_from_api["LastName"]) ? sanitize_data($data_from_api["LastName"]) : '';
-    $mobile = isset($data_from_api["Mobile"]) ? sanitize_data($data_from_api["Mobile"]) : '';
     $emailid = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
-    $password = isset($data_from_api["Password"]) ? $data_from_api["Password"] : '';
     $company = sanitize_data($data_from_api["Company"]);
     $countryname = isset($data_from_api["CountryName"]) ? $data_from_api["CountryName"] : '';
 
@@ -31,27 +29,12 @@ function insertUser($pdo)
             "message" => "Last Name Can't be Empty.",
         );
     }
-    elseif(empty($mobile))
-    {
-        $response = array(
-            "success" => false,
-            "error" => true,
-            "message" => "Mobile Can't be Empty.",
-        );
-    }
     elseif(!filter_var($emailid ?? '', FILTER_VALIDATE_EMAIL)) 
 	{
         $response = array(
             "success" => false,
             "error" => true,
             "message" => "Enter the valid email id.",
-        );
-	}
-    elseif(empty($password) || strlen($password) <= 7 || !preg_match("#[a-z]+#",$password) || !preg_match("#[A-Z]+#",$password) || !preg_match("#[0-9]+#",$password) || !preg_match('/[\'£$%&*()}{@#~?><>,|=_+¬-]/',$password))
-	{
-        $response = array(
-            "success" => false,
-            "message" => "Your Password Must Contain At Least 8 Characters Least 1 Number 1 Capital Letter 1 Lowercase Letter 1 Special Character!",
         );
 	}
     elseif(empty($countryname) || !preg_match('/^[a-zA-Z\s]*$/', $countryname) || $countryname == '')
@@ -69,7 +52,7 @@ function insertUser($pdo)
             'is_active' => 1
         );
 
-        $sqlemailcheck = 'SELECT `id` FROM `tbl_users` WHERE `emailid`= :emailid and `is_active` = :is_active';
+        $sqlemailcheck = 'SELECT `id`,`is_verify` FROM `tbl_users` WHERE `emailid`= :emailid and `is_active` = :is_active';
         $stmtemailcheck = $pdo->prepare($sqlemailcheck);
         $stmtemailcheck->execute($dataemailcheck);
         $resultemailcheck = $stmtemailcheck->fetch(PDO::FETCH_ASSOC);
@@ -78,25 +61,59 @@ function insertUser($pdo)
             $data = array(
                 'firstname'=>$firstname,
                 'lastname'=>$lastname,
-                'mobile'=>$mobile,
                 'emailid'=>$emailid,
-                'new_password'=>password_hash($password, PASSWORD_BCRYPT,['cost' => 12]),
                 'company'=>$company,
                 'country'=>$countryname,
             );
-            $sqlinsertuser = "INSERT INTO `tbl_users`(`firstname`, `lastname`, `mobile`, `emailid`, `password`, `company`, `country`) VALUES (:firstname,:lastname,:mobile,:emailid,:new_password,:company,:country)";
+            $sqlinsertuser = "INSERT INTO `tbl_users`(`firstname`, `lastname`, `emailid`, `company`, `country`) VALUES (:firstname,:lastname,:emailid,:company,:country)";
             $stmtinsertuser = $pdo->prepare($sqlinsertuser);
             if($stmtinsertuser->execute($data))
             {
                 $id = $pdo->lastInsertId();
-                welcomeEmail($id,$emailid);
-
+                $url = welcomeEmail($id,$emailid);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid
+                        'emailid'=>$emailid,
+                        'url'=>$url
+                    )
+                );
+            }
+            else
+            {
+                $response = array(
+                    "success" => false,
+                    "error" => true,
+                    "message" => "data not inserted successfully. pls try again later",
+                );
+            }
+        }
+        elseif($resultemailcheck['is_verify'] == 0)
+        {
+            $data_update = array(
+                'id' => $resultemailcheck['id'],
+                'firstname'=>$firstname,
+                'lastname'=>$lastname,
+                'emailid'=>$emailid,
+                'company'=>$company,
+                'country'=>$countryname,
+            );
+
+            $sqlupdateuser = "UPDATE `tbl_users` SET `firstname`=:firstname,`lastname`=:lastname,`emailid`=:emailid,`company`=:company,`country`=:country WHERE `id`=:id";
+            $stmtinsertuser = $pdo->prepare($sqlupdateuser);
+            if($stmtinsertuser->execute($data_update))
+            {
+                $id = $data_update['id'];
+                $url = welcomeEmail($id,$emailid);
+                $response = array(
+                    "success" => true,
+                    "message" => "verification link send on email.",
+                    "data" => array(
+                        'id'=>$id,
+                        'emailid'=>$emailid,
+                        'url'=>$url
                     )
                 );
             }
@@ -110,7 +127,7 @@ function insertUser($pdo)
             }
         }
         else
-        {
+        {    
             $response = array(
                 "success" => false,
                 "error" => true,
@@ -258,7 +275,7 @@ function getUser($pdo)
                 $response = array(
                     "success" => false,
                     "error" => true,
-                    "message" => "User not verified.",
+                    "message" => "User not verified. plz register again",
                 );
             }
         }   
@@ -298,13 +315,14 @@ function getforgetPassword($pdo)
 
         if($resultemailcheck)
         {
-            forgotpasswordEmail($resultemailcheck['id'],$email);
+            $url = forgotpasswordEmail($resultemailcheck['id'],$email);
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
                     "id" => (int)$resultemailcheck['id'],
-                    "email" => $email
+                    "email" => $email,
+                    'url' => $url
                 )
             );
         }
@@ -351,11 +369,11 @@ function setnewpassword($pdo)
     {
         $datausercheck = array(
             "userpassword" => password_hash($newpassword, PASSWORD_BCRYPT,['cost' => 12]),
+            "is_verify" => 1,
             "userid"=> $userid,
             "is_active" => 1
         );
-
-        $usercheck_sql ="UPDATE `tbl_users` SET `password`=:userpassword WHERE id = :userid and is_active = :is_active";
+        $usercheck_sql ="UPDATE `tbl_users` SET `password`=:userpassword,`is_verify`=:is_verify WHERE id = :userid and is_active = :is_active";
         $stmtusercheck = $pdo->prepare($usercheck_sql);
         if($stmtusercheck->execute($datausercheck))
         {

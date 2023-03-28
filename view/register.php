@@ -33,7 +33,7 @@ if(isset($_SESSION["login"]))
                 <div class="col-md-4">
                     <form name="register_form_submit" method="post">
                         <div class="mb-3">
-                            <label for="firstname" class="form-label">First Name </label>
+                            <label for="firstname" class="form-label">First Name</label>
                             <input type="text" class="form-control" name ="firstname" id="firstname">
                         </div>
                         <div class="mb-3">
@@ -41,26 +41,15 @@ if(isset($_SESSION["login"]))
                             <input type="text" class="form-control" name ="lastname" id="lastname">
                         </div>
                         <div class="mb-3">
-                            <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="text" class="form-control" name ="mobile" id="mobile">
-                        </div>
-                        <div class="mb-3">
                             <label for="email" class="form-label">Email address</label>
                             <input type="email" class="form-control" name ="email" id="email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" id="password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" name="confirm_password" id="confirm_password">
                         </div>
                         <div class="mb-3">
                             <label for="company" class="form-label">Company</label>
                             <input type="text" class="form-control" name="company" id="company">
                         </div>
                         <input type="hidden" name="country_name" value="<?php echo getLoction()['geoplugin_countryName'];?>">
+                        <input type="hidden" name="payment_type" value="<?php echo $_GET['id'];?>">
                         <input type="hidden" name="action" value="registeruser">
 
                         <a href="login.php" class="">login</a>

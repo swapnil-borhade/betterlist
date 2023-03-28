@@ -13,21 +13,33 @@ switch ($action) {
 
 function registeruser()
 {
-    $curl = curl_init();
-    $CURLOPT_URL = baseUrl.'register.php/userinfo';
-    $CURLOPT_CUSTOMREQUEST = 'POST';
-    $CURLOPT_POSTFIELDS = '{
-        "FirstName" : "'.sanitize_data($_POST['firstname']).'",
-        "LastName" : "'.sanitize_data($_POST['lastname']).'",
-        "Mobile" : "'.sanitize_data($_POST['mobile']).'",
-        "EmailId" : "'.$_POST['email'].'",
-        "Password" : "'.$_POST['password'].'",
-        "Company" : "'.sanitize_data($_POST['company']).'",
-        "CountryName" : "'.sanitize_data($_POST['country_name']).'"
-    }';
-    curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
-    $response = curl_exec($curl);
-    echo $response;
+    if($_POST['payment_type'] != 'free')
+    {
+        $response = array(
+            'success' => true,
+            'data' => array(
+                'url' => 'payment_gateway'
+            ),
+        );
+        echo json_encode($response);
+    }
+    else{
+        $curl = curl_init();
+        $CURLOPT_URL = baseUrl.'register.php/userinfo';
+        $CURLOPT_CUSTOMREQUEST = 'POST';
+        $CURLOPT_POSTFIELDS = '{
+            "FirstName" : "'.sanitize_data($_POST['firstname']).'",
+            "LastName" : "'.sanitize_data($_POST['lastname']).'",
+            "EmailId" : "'.$_POST['email'].'",
+            "Company" : "'.sanitize_data($_POST['company']).'",
+            "CountryName" : "'.sanitize_data($_POST['country_name']).'",
+            "paymnet_type" : "'.sanitize_data($_POST['payment_type']).'"
+        }';
+        curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
+        $response = curl_exec($curl);
+        echo $response;
+    }
+    
 }
 
 function loginuser()

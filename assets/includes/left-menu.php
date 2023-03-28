@@ -1,5 +1,5 @@
 <ul>
-	<li><a href="index.php">Dashboard</a></li>
+	<li><a href="dashboard.php">Dashboard</a></li>
 	<li><a href="profile.php">Profile</a></li>
 	<li><a href="license.php">License </a></li>
 	<li><a href="faqs.php">FAQs</a></li>

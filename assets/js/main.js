@@ -23,23 +23,10 @@ $(document).ready(function ()
                 required:true,
                 minlength:3
             },
-            mobile: {
-                required:true,
-                minlength:10,
-                maxlength: 10,
-                mobileValidation : true,
-            },
             email: {
                 required:true,
                 email:true,
                 emailExt:true
-            },
-            password: {
-                minlength: 8,
-            },
-            confirm_password: {
-                minlength: 8,
-                equalTo: "#password"
             },
             company: {
                 required:false,
@@ -55,14 +42,14 @@ $(document).ready(function ()
                 dataType:"JSON",
                 success: function(response) 
                 {
-                    console.log(response);
                     if(response.success == false)
                     {
                         $("#show_server_error").html(response.message);
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "thankyou.php";
+                        console.log(response.data.url);
+                        //window.location.href = "thankyou.php";
                     }
                 }
             });
@@ -92,7 +79,6 @@ $(document).ready(function ()
                 dataType:"JSON",
                 success: function(response) 
                 {
-                    console.log(response);
                     if(response.success == false)
                     {
                         $("#show_server_error").html(response.message);
@@ -126,15 +112,14 @@ $(document).ready(function ()
                 dataType:"JSON",
                 success: function(response) 
                 {
-                    console.log(response);
                     if(response.success == false)
                     {
                         $("#show_server_error").html(response.message);
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "forgotpasswordthankyou.php";
-                        //console.log(response.data);
+                        //window.location.href = "forgotpasswordthankyou.php";
+                        console.log(response.data.url);
                     }
                 }
             });
@@ -165,7 +150,6 @@ $(document).ready(function ()
                 dataType:"JSON",
                 success: function(response) 
                 {
-                    console.log(response);
                     if(response.success == false)
                     {
                         $("#show_server_error").html(response.message);
@@ -229,7 +213,6 @@ $(document).ready(function ()
                 dataType:"JSON",
                 success: function(response) 
                 {
-                    console.log(response);
                     if(response.success == false)
                     {
                         $("#show_server_error").html(response.message);
