@@ -4,15 +4,14 @@ session_start();
 include('../api/connection.php');
 include('../controller/functions.php');
 
-forgotPasswordEmail($pdo);
+$message = forgotPasswordEmail($pdo);
 // confirm Email ID
 function forgotPasswordEmail($pdo)
 {
 	$userid = decryp($_GET['id']);
-
 	$time = decryp($_GET['time']);
 	$today = date("Y-m-d H:i:s");
-	$expir_time = date($time + 15 * 60);
+	$expir_time = date($time + 15 * 60); //# D * H * M * S
 
 	if(time() < $expir_time) 
 	{
@@ -69,9 +68,29 @@ function forgotPasswordEmail($pdo)
         die();
     }
     else
-    { 
-        echo $response['message']; 
+    {
+        return $response['message'];
     }
 }
-
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Pawssword Email</title>
+    <?php include('../assets/includes/header-links.php');?>
+</head>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p><?php echo $message;?></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

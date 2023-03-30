@@ -40,7 +40,7 @@ if(isset($_SESSION["login"]))
                             <input type="password" class="form-control" name="password" id="password">
                         </div>
                         <input type="hidden" name="action" value="loginuser">
-                        <a href="register.php">register</a>
+                        <a href="index.php">Buy Now</a>
                         <a href="forgotPassword.php">Forgot Password</a>
                         <div id="show_server_error"></div>
                         <button type="submit" name ="submit" class="btn btn-primary">Submit</button>
