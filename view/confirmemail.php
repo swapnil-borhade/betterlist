@@ -10,6 +10,7 @@ function confirmEmail($pdo)
 {
 	$userid = decryp($_GET['id']);
 	$time = decryp($_GET['time']);
+	$paymenttype = decryp($_GET['payment']);
 	$today = date("Y-m-d H:i:s");
 	$expir_time = date($time + 60 * 60); //# D * H * M * S
 
@@ -72,6 +73,7 @@ function confirmEmail($pdo)
     {
 		$_SESSION['userid'] = encryp($userid);
         $_SESSION['forgotPassword'] = true;
+        $_SESSION['paymenttype'] = encryp($paymenttype);
         header('Location: newpassword.php');
         die();
     }

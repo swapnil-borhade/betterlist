@@ -23,7 +23,8 @@ function registeruser()
         );
         echo json_encode($response);
     }
-    else{
+    else
+    {
         $curl = curl_init();
         $CURLOPT_URL = baseUrl.'register.php/userinfo';
         $CURLOPT_CUSTOMREQUEST = 'POST';
@@ -33,13 +34,12 @@ function registeruser()
             "EmailId" : "'.$_POST['email'].'",
             "Company" : "'.sanitize_data($_POST['company']).'",
             "CountryName" : "'.sanitize_data($_POST['country_name']).'",
-            "paymnet_type" : "'.sanitize_data($_POST['payment_type']).'"
+            "PaymentType" : "'.sanitize_data($_POST['payment_type']).'"
         }';
         curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
         $response = curl_exec($curl);
         echo $response;
     }
-    
 }
 
 function loginuser()
@@ -77,13 +77,15 @@ function forgotpassword()
 
 function setnewpassword()
 {
+    $payment_type = (isset($_POST['payment_type']))  ? ', "PaymentType" : "'.$_POST['dsad'].'"' : '' ;
     $curl = curl_init();
     $CURLOPT_URL = baseUrl.'register.php/setnewpassword';
     $CURLOPT_CUSTOMREQUEST = 'POST';
     $CURLOPT_POSTFIELDS = '{
         "userid" : "'.decryp($_POST['id']).'",
         "newpassword" : "'.$_POST['password'].'",
-        "confirmpassword" : "'.$_POST['confirm_password'].'"
+        "confirmpassword" : "'.$_POST['confirm_password'].'"'.
+        $payment_type.'
     }';
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
@@ -91,6 +93,10 @@ function setnewpassword()
     if($response_array['success'] == true)
     {
         unset($_SESSION['forgotPassword']);
+        if(isset($_SESSION['paymenttype']))
+        {
+            unset($_SESSION['paymenttype']);
+        }
     }
     echo $response;
 }

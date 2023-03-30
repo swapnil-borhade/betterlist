@@ -48,8 +48,8 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        console.log(response.data.url);
-                        //window.location.href = "thankyou.php";
+                        //console.log(response.data.url);
+                        window.location.href = "thankyou.php";
                     }
                 }
             });
@@ -118,8 +118,8 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        //window.location.href = "forgotpasswordthankyou.php";
-                        console.log(response.data.url);
+                        window.location.href = "forgotpasswordthankyou.php";
+                        //console.log(response.data.url);
                     }
                 }
             });
@@ -254,9 +254,9 @@ $(document).ready(function ()
         $.ajax({
             type: "POST",
             url:"../controller/license_controller.php",
-            data:{"userid": id,"action": "setlicenseinfo"},            
+            data:{"userid": id,"action": "setlicenseinfo"},
             dataType:"JSON",
-            success: function(response) 
+            success: function(response)
             {
                 if(response.success == true)
                 {

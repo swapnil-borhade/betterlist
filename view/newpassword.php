@@ -44,6 +44,10 @@ elseif(!isset($_SESSION['forgotPassword']))
                             <input type="password" class="form-control" name="confirm_password" id="confirm_password">
                         </div>
                         <input type="hidden" name="id" value="<?php echo $_SESSION['userid']; ?>">
+                        <?php if(isset($_SESSION["paymenttype"]))
+                        {?>
+                        <input type="hidden" name="payment_type" value="<?php echo $_SESSION['paymenttype']; ?>">
+                        <?php } ?>
                         <input type="hidden" name="action" value="setnewpassword">
                         <div id="show_server_error"></div>
                         <button type="submit" name ="submit" class="btn btn-primary">Submit</button>

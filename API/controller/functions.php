@@ -1,10 +1,10 @@
 <?php
 
 //#localhost
-define('siteUrl', 'http://localhost/swapnil/work/betterlist/view/');
+// define('siteUrl', 'http://localhost/swapnil/work/betterlist/view/');
 
 //# code.hybclient.com
-// define('siteUrl', 'https://code.hybclient.com/betterlist/view/');
+define('siteUrl', 'https://code.hybclient.com/betterlist/view/');
 
 function sanitize_data($data)
 {
@@ -48,11 +48,12 @@ function timezone($time,$timezone)
     return ($timezone_array);
 }
 
-function welcomeEmail($userid,$email)
+function welcomeEmail($userid,$email,$paymenttype)
 {
 	$userid = encryp($userid);
     $time = encryp(time());
-	$url = siteUrl."confirmemail.php?id=$userid&time=$time";
+	$paymenttype = encryp($paymenttype);
+	$url = siteUrl."confirmemail.php?id=$userid&time=$time&payment=$paymenttype";
 	$to = $email;
 	$subject = "Confirm Email.";
 
@@ -71,8 +72,10 @@ function welcomeEmail($userid,$email)
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
 
-	return $url;
-	//mail($to,$subject,$message,$headers);
+	if(mail($to,$subject,$message,$headers))
+	{
+		return $url;
+	}
 }
 
 function forgotpasswordEmail($id,$email)
@@ -98,8 +101,12 @@ function forgotpasswordEmail($id,$email)
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
 
-	return $url;
-	//mail($to,$subject,$message,$headers);
+	// return $url;
+	if(mail($to,$subject,$message,$headers))
+	{
+		return $url;
+	}
+	// mail($to,$subject,$message,$headers);
 }
 
 function getlicensekey()

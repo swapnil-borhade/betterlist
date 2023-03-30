@@ -11,7 +11,8 @@ function insertUser($pdo)
     $lastname = isset($data_from_api["LastName"]) ? sanitize_data($data_from_api["LastName"]) : '';
     $emailid = isset($data_from_api["EmailId"]) ? $data_from_api["EmailId"] : '';
     $company = sanitize_data($data_from_api["Company"]);
-    $countryname = isset($data_from_api["CountryName"]) ? $data_from_api["CountryName"] : '';
+    $countryname = isset($data_from_api["CountryName"]) ? sanitize_data($data_from_api["CountryName"]) : '';
+    $paymenttype = isset($data_from_api["PaymentType"]) ? sanitize_data($data_from_api["PaymentType"]) : '';
 
     if(empty($firstname) || !preg_match('/^[a-zA-Z\s]*$/', $firstname) || $firstname == '')
     {
@@ -45,6 +46,14 @@ function insertUser($pdo)
             "message" => "Country Name Can't be Empty.",
         );
     }
+    elseif(empty($paymenttype) || !preg_match('/^[a-zA-Z\s]*$/', $paymenttype) || $paymenttype == '')
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "payment type Can't be Empty.",
+        );
+    }
     else
     {
         $dataemailcheck = array(
@@ -70,14 +79,13 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data))
             {
                 $id = $pdo->lastInsertId();
-                $url = welcomeEmail($id,$emailid);
+                welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid,
-                        'url'=>$url
+                        'emailid'=>$emailid
                     )
                 );
             }
@@ -106,14 +114,13 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data_update))
             {
                 $id = $data_update['id'];
-                $url = welcomeEmail($id,$emailid);
+                welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid,
-                        'url'=>$url
+                        'emailid'=>$emailid
                     )
                 );
             }
@@ -315,14 +322,13 @@ function getforgetPassword($pdo)
 
         if($resultemailcheck)
         {
-            $url = forgotpasswordEmail($resultemailcheck['id'],$email);
+            forgotpasswordEmail($resultemailcheck['id'],$email);
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
                     "id" => (int)$resultemailcheck['id'],
-                    "email" => $email,
-                    'url' => $url
+                    "email" => $email
                 )
             );
         }
@@ -344,6 +350,9 @@ function setnewpassword($pdo)
     $userid = isset($data_from_api["userid"]) ? $data_from_api["userid"] : '';
     $newpassword = isset($data_from_api["newpassword"]) ? $data_from_api["newpassword"] : '';
     $confirmpassword = isset($data_from_api["confirmpassword"]) ? $data_from_api["confirmpassword"] : '';
+    $paymenttype = isset($data_from_api["PaymentType"]) ? sanitize_data($data_from_api["PaymentType"]) : '';
+
+
     if(empty($userid) || $userid == '')
     {
         $response = array(
@@ -367,16 +376,86 @@ function setnewpassword($pdo)
     }
     else
     {
-        $datausercheck = array(
-            "userpassword" => password_hash($newpassword, PASSWORD_BCRYPT,['cost' => 12]),
-            "is_verify" => 1,
+        $datacheck_already_verified = array(
             "userid"=> $userid,
             "is_active" => 1
         );
-        $usercheck_sql ="UPDATE `tbl_users` SET `password`=:userpassword,`is_verify`=:is_verify WHERE id = :userid and is_active = :is_active";
-        $stmtusercheck = $pdo->prepare($usercheck_sql);
-        if($stmtusercheck->execute($datausercheck))
+        $today = date("Y-m-d H:i:s");
+
+        $check_already_verified_sql = "SELECT `is_verify`,`is_active` FROM `tbl_users` WHERE `id` = :userid and `is_active` = :is_active";
+        $stmtusercheck_verified = $pdo->prepare($check_already_verified_sql);
+        $stmtusercheck_verified->execute($datacheck_already_verified);
+        $result_verified = $stmtusercheck_verified->fetch();
+        if($result_verified)
         {
+            $datausercheck = array(
+                "userpassword" => password_hash($newpassword, PASSWORD_BCRYPT,['cost' => 12]),
+                "userid"=> $userid,
+                "is_active" => 1
+            );
+
+            //# ------- new user set password 
+            if($result_verified['is_verify'] != 1)
+            {   
+                if($paymenttype == 'free')
+                {
+                    $end_date = NULL;
+                }
+                else
+                {
+                    $end_date = date('Y-m-d H:i:s',strtotime('+365 days',strtotime($today)));
+                }
+
+                $insert_data = array(
+                    "userid" => $userid,
+                    "payment_type" => $paymenttype,
+                    "start_date" => $today,
+                    "end_date" => $end_date
+                );
+                $insert_sql = "INSERT INTO `tbl_payment`(`userid`, `payment_type`, `start_date`, `end_date`) VALUES (:userid, :payment_type, :start_date, :end_date)";
+                $insert_stmt = $pdo->prepare($insert_sql);
+                if($insert_stmt->execute($insert_data))
+                {
+                    $insert_data_licences = array(
+                        "userid" => $userid,
+                        "license_key" => getlicensekey(),
+                        "start_date" => $today,
+                        "end_date" => $end_date
+                    );
+                    $insert_sql_licences = "INSERT INTO `tbl_license`(`userid`, `license_key`, `start_date`, `end_date`) VALUES (:userid, :license_key, :start_date, :end_date)";
+                    $insert_stmt_licences = $pdo->prepare($insert_sql_licences);
+                    $insert_stmt_licences->execute($insert_data_licences);
+                }
+                //# ------- new user set password
+                $update_sql = ", `is_verify`= 1";
+            }
+            //# ---- forgot password screen------------
+            else
+            {
+                //# ---- forgot password screen------------
+                $update_sql = "";
+            }
+
+            // $update_sql = ($result_verified['is_verify'] != 1) ? ", `is_verify`= 1" : "";
+
+            $usercheck_sql ="UPDATE `tbl_users` SET `password`=:userpassword".$update_sql." WHERE id = :userid and is_active = :is_active";
+            $stmtusercheck = $pdo->prepare($usercheck_sql);
+            if($stmtusercheck->execute($datausercheck))
+            {
+                $response = array(
+                    "success" => true,
+                    "message" => "New Password Updated.",
+                );
+            }
+            else
+            {
+                $response = array(
+                    "success" => false,
+                    "error" => true,
+                    "message" => "Something is wrong. Please try again after sometime.",
+                );
+            }
+
             $response = array(
                 "success" => true,
                 "message" => "New Password Updated.",
@@ -387,7 +466,7 @@ function setnewpassword($pdo)
             $response = array(
                 "success" => false,
                 "error" => true,
-                "message" => "Something is wrong. Please try again after sometime.",
+                "message" => "user not found.",
             );
         }
     }
