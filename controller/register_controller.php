@@ -15,6 +15,14 @@ function registeruser()
 {
     if($_POST['payment_type'] != 'free')
     {
+
+        $firstname = sanitize_data($_POST['firstname']);
+        $lastname = sanitize_data($_POST['lastname']);
+        $email = $_POST['email'];
+        $company = sanitize_data($_POST['company']);
+        $country_name = sanitize_data($_POST['country_name']);
+        $payment_type = sanitize_data($_POST['payment_type']);
+
         $response = array(
             'success' => true,
             'data' => array(
@@ -77,7 +85,7 @@ function forgotpassword()
 
 function setnewpassword()
 {
-    $payment_type = (isset($_POST['payment_type']))  ? ', "PaymentType" : "'.$_POST['dsad'].'"' : '' ;
+    $payment_type = (isset($_POST['payment_type']))  ? ', "PaymentType" : "'.decryp($_POST['payment_type']).'"' : '' ;
     $curl = curl_init();
     $CURLOPT_URL = baseUrl.'register.php/setnewpassword';
     $CURLOPT_CUSTOMREQUEST = 'POST';
