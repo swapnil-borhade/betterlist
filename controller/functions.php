@@ -1,10 +1,10 @@
 <?php
 
 // ## code.hybclient server
-define('baseUrl', 'https://code.hybclient.com/betterlist/api/');
+// define('baseUrl', 'https://code.hybclient.com/betterlist/api/');
 
 // ## localhost server
-// define('baseUrl', 'http://localhost/swapnil/work/betterlist/api/');
+define('baseUrl', 'http://localhost/swapnil/work/betterlist/api/');
 
 function sanitize_data($data)
 {

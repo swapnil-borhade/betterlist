@@ -51,7 +51,6 @@ if(isset($_SESSION["login"]))
                         <input type="hidden" name="country_name" value="<?php echo getLoction()['geoplugin_countryName'];?>">
                         <input type="hidden" name="payment_type" value="<?php echo $_GET['id'];?>">
                         <input type="hidden" name="action" value="registeruser">
-
                         <a href="login.php" class="">login</a>
                         <div id="show_server_error"></div>
                         <button type="submit" name ="submit" class="btn btn-primary">Submit</button>

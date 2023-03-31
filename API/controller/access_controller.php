@@ -79,13 +79,14 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data))
             {
                 $id = $pdo->lastInsertId();
-                welcomeEmail($id,$emailid,$paymenttype);
+                $url = welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid
+                        'emailid'=>$emailid,
+                        'url' => $url
                     )
                 );
             }
@@ -114,13 +115,14 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data_update))
             {
                 $id = $data_update['id'];
-                welcomeEmail($id,$emailid,$paymenttype);
+                $url = welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid
+                        'emailid'=>$emailid,
+                        'url' => $url
                     )
                 );
             }
@@ -322,13 +324,14 @@ function getforgetPassword($pdo)
 
         if($resultemailcheck)
         {
-            forgotpasswordEmail($resultemailcheck['id'],$email);
+            $url = forgotpasswordEmail($resultemailcheck['id'],$email);
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
                     "id" => (int)$resultemailcheck['id'],
-                    "email" => $email
+                    "email" => $email,
+                    'url' => $url
                 )
             );
         }
@@ -396,7 +399,7 @@ function setnewpassword($pdo)
 
             //# ------- new user set password 
             if($result_verified['is_verify'] != 1)
-            {   
+            {
                 if($paymenttype == 'free')
                 {
                     $end_date = NULL;
