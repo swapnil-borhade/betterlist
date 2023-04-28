@@ -10,7 +10,6 @@ switch ($action) {
 
 function updateuser()
 {
-    echo $_POST['address'];
     $curl = curl_init();
     $CURLOPT_URL = baseUrl.'profile.php/userinfo';
     $CURLOPT_CUSTOMREQUEST = 'POST';
@@ -24,10 +23,6 @@ function updateuser()
         "city": "'.$_POST['city'].'",
         "country": "'.$_POST['country'].'"
     }';
-
-    echo $CURLOPT_POSTFIELDS;
-    exit();
-
     curl_call($curl,$CURLOPT_URL,$CURLOPT_CUSTOMREQUEST,$CURLOPT_POSTFIELDS);
     $response = curl_exec($curl);
     echo $response;
