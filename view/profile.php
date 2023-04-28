@@ -71,7 +71,7 @@ include ('../controller/functions.php');
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" name="address" id="address" value="<?php echo $address;?>">
+                                <textarea rows="3" class="form-control" name="address" id="address"><?php echo $address;?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>

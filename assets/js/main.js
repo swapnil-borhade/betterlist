@@ -7,8 +7,27 @@ $(document).ready(function ()
     },"Your email id is not correct format");
 
     $.validator.addMethod("mobileValidation",function(value, element) {
-        return !/^\d{8}$|^\d{10}$/.test(value) ? false : true;
+        //return !/^\d{8}$|^\d{10}$/.test(value) ? false : true;
+        return this.optional(element) || /^\d{8,}$/.test(phone_number.replace(/\s/g, ""));
     },"Mobile number invalid");
+
+    $.validator.addMethod("alpha", function(value, element) {
+        return this.optional(element) || value == value.match(/^[a-zA-Z]+$/);
+    },"Allow only alphabets.");
+
+    $.validator.addMethod("Password", function(value) {
+        return /^[A-Za-z0-9\d=\'£$%&*()}{@#~?><>,|=_+¬-]*$/.test(value) // consists of only these
+            && /[A-Z]/.test(value) // has a upercase letter
+            && /[a-z]/.test(value) // has a lowercase letter
+            && /\d/.test(value) // has a digit
+            && /[\'£$%&*()}{@#~?><>,|=_+¬-]/.test(value) // has a special characters
+    },"Your Password Must Contain At Least 8 Characters Least 1 Number 1 Capital Letter 1 Lowercase Letter 1 Special Character!");
+
+    $.validator.addMethod("Company", function(value) {
+        return /^[A-Za-z0-9\s\d=\'@$-,.()&#]*$/.test(value) // consists of only these
+    },"Company name invalid");
+    
+
 
     //# register form submit js
     $("form[name=register_form_submit]").validate({
@@ -16,10 +35,12 @@ $(document).ready(function ()
         errorClass: "help-inline",
         rules: {
             firstname: { 
+                alpha:true,
                 required:true,
                 minlength:3
             },
             lastname: {
+                alpha:true,
                 required:true,
                 minlength:3
             },
@@ -30,6 +51,7 @@ $(document).ready(function ()
             },
             company: {
                 required:false,
+                Company:false,
                 minlength:3
             },
         },
@@ -48,8 +70,8 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        //console.log(response.data.url);
-                        window.location.href = "thankyou.php";
+                        console.log(response.data.url);
+                        //window.location.href = "thankyou.php";
                     }
                 }
             });
@@ -118,8 +140,8 @@ $(document).ready(function ()
                     }
                     else if(response.success == true)
                     {
-                        window.location.href = "forgotpasswordthankyou.php";
-                        //console.log(response.data.url);
+                        //window.location.href = "forgotpasswordthankyou.php";
+                        console.log(response.data.url);
                     }
                 }
             });
@@ -134,10 +156,10 @@ $(document).ready(function ()
             password: {
                 required: true,
                 minlength: 8,
+                Password:true
             },
             confirm_password: {
                 required: true,
-                minlength: 8,
                 equalTo: "#password"
             }
         },
@@ -169,17 +191,19 @@ $(document).ready(function ()
         errorClass: "help-inline",
         rules: {
             firstname: { 
+                alpha:true,
                 required:true,
                 minlength:3
             },
             lastname: {
+                alpha:true,
                 required:true,
                 minlength:3
             },
             mobile: {
-                required:true,
-                minlength:10,
-                maxlength: 10,
+                required:false,
+                //minlength: 10,
+                //maxlength: 10,
                 mobileValidation : true,
             },
             email: {
@@ -189,6 +213,7 @@ $(document).ready(function ()
             },
             company: {
                 required:false,
+                Company:false,
                 minlength:3
             },
             address: {
@@ -200,7 +225,7 @@ $(document).ready(function ()
                 minlength:3
             },
             country: {
-                required:false,
+                required:true,
                 minlength:3
             },
         },
@@ -209,7 +234,57 @@ $(document).ready(function ()
             $.ajax({
                 type: "POST",
                 url:"../controller/profile_controller.php",
-                data:$("form[name=profile_page]").serialize(),           
+                data:$("form[name=profile_page]").serializeArray(),           
+                dataType:"JSON",
+                success: function(response) 
+                {
+                    if(response.success == false)
+                    {
+                        $("#show_server_error").html(response.message);
+                    }
+                    else if(response.success == true)
+                    {
+                        $("#show_server_error").html(response.message); 
+                    }
+                }
+            });
+        }
+    });
+
+    //# profile_update form submit js
+    $("form[name=support_page]").validate({
+        errorElement: "span",
+        errorClass: "help-inline",
+        rules: {
+            topicname: { 
+                alpha:true,
+                required:true,
+                minlength:3
+            },
+            website: {
+                alpha:true,
+                required:true,
+                minlength:3
+            },
+            subject: {
+                required:true,
+                minlength:3
+            },
+            message: {
+                required:true,
+                minlength:3
+            },
+            policy: {
+                required:true,
+                minlength:1
+            },
+        },
+        submitHandler: function(form) 
+        {
+            $.ajax({
+                type: "POST",
+                url:"../controller/support_controller.php",
+                data:$("form[name=support_page]").serializeArray(),           
                 dataType:"JSON",
                 success: function(response) 
                 {

@@ -74,26 +74,62 @@ function updateUser($pdo)
     $city = isset($data_from_api["city"]) ? sanitize_data($data_from_api["city"]) : '';
     $country = isset($data_from_api["country"]) ? sanitize_data($data_from_api["country"]) : '';
 
-    if (empty($firstname) || $firstname == '') 
-    {
-        $response = array(
-            "success" => false,
-            "message" => "Please enter firstname.",
-        );
-    }
-    elseif (empty($lastname) || $lastname == '') 
-    {
-        $response = array(
-            "success" => false,
-            "message" => "Please enter lastname.",
-        );
-    }
-    elseif(empty($mobile))
+    //<script>alert("test");</script>
+
+
+
+
+    echo $address;
+    exit();
+
+
+    if(empty($firstname) || $firstname == '')
     {
         $response = array(
             "success" => false,
             "error" => true,
-            "message" => "Mobile Can't be Empty.",
+            "message" => "First Name Can't be Empty.",
+        );
+    }
+    elseif(!preg_match('/^[a-zA-Z\s]*$/', $firstname))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Allow only alphabets.",
+        );
+    }
+    elseif(empty($lastname) || $lastname == '')
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Last Name Can't be Empty.",
+        );
+    }
+    elseif(!preg_match('/^[a-zA-Z\s]*$/', $lastname))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Allow only alphabets.",
+        );
+    }
+    elseif(!preg_match('/^[0-9]*$/', $mobile))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Only alpha numeric value.",
+        );
+    }
+    
+    elseif(!preg_match('/^[A-Za-z0-9\s\d=\'@$-,.()&#]*$/', $company))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Allow only alphabets.",
         );
     }
     elseif (empty($country) || $country == '') 
@@ -133,7 +169,7 @@ function updateUser($pdo)
             {
                 $response = array(
                     "success" => true,
-                    "message" => "user updated successfully.",
+                    "message" => "Your profile details has been updated.",
                     "data" => array(
                         "userid" => $userid
                     )
@@ -158,6 +194,6 @@ function updateUser($pdo)
         }
     }
     header("HTTP/1.1 200 OK");
-    echo json_encode( $response);
+    echo json_encode($response);
 }
 ?>

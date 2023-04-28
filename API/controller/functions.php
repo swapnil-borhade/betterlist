@@ -1,10 +1,10 @@
 <?php
 
 //#localhost
-// define('siteUrl', 'http://localhost/swapnil/work/betterlist/view/');
+define('siteUrl', 'http://localhost/swapnil/work/betterlist/view/');
 
 //# code.hybclient.com
-define('siteUrl', 'https://code.hybclient.com/betterlist/view/');
+// define('siteUrl', 'https://code.hybclient.com/betterlist/view/');
 
 function sanitize_data($data)
 {
@@ -71,11 +71,11 @@ function welcomeEmail($userid,$email,$paymenttype)
 	$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
-
-	if(mail($to,$subject,$message,$headers))
-	{
-		return $url;
-	}
+	return $url;
+	// if(mail($to,$subject,$message,$headers))
+	// {
+	// 	return $url;
+	// }
 }
 
 function forgotpasswordEmail($id,$email)
@@ -101,11 +101,11 @@ function forgotpasswordEmail($id,$email)
 	//### More headers
 	$headers .= 'From: Hybreed <swapnil@hybreed.co>' . "\r\n";
 
-	// return $url;
-	if(mail($to,$subject,$message,$headers))
-	{
-		return $url;
-	}
+	return $url;
+	// if(mail($to,$subject,$message,$headers))
+	// {
+	// 	return $url;
+	// }
 	// mail($to,$subject,$message,$headers);
 }
 

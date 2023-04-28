@@ -14,7 +14,7 @@ function insertUser($pdo)
     $countryname = isset($data_from_api["CountryName"]) ? sanitize_data($data_from_api["CountryName"]) : '';
     $paymenttype = isset($data_from_api["PaymentType"]) ? sanitize_data($data_from_api["PaymentType"]) : '';
 
-    if(empty($firstname) || !preg_match('/^[a-zA-Z\s]*$/', $firstname) || $firstname == '')
+    if(empty($firstname) || $firstname == '')
     {
         $response = array(
             "success" => false,
@@ -22,12 +22,28 @@ function insertUser($pdo)
             "message" => "First Name Can't be Empty.",
         );
     }
-    elseif(empty($lastname) || !preg_match('/^[a-zA-Z\s]*$/', $lastname) || $lastname == '')
+    elseif(!preg_match('/^[a-zA-Z\s]*$/', $firstname))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Allow only alphabets.",
+        );
+    }
+    elseif(empty($lastname) || $lastname == '')
     {
         $response = array(
             "success" => false,
             "error" => true,
             "message" => "Last Name Can't be Empty.",
+        );
+    }
+    elseif(!preg_match('/^[a-zA-Z\s]*$/', $lastname))
+    {
+        $response = array(
+            "success" => false,
+            "error" => true,
+            "message" => "Allow only alphabets.",
         );
     }
     elseif(!filter_var($emailid ?? '', FILTER_VALIDATE_EMAIL)) 
@@ -79,13 +95,14 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data))
             {
                 $id = $pdo->lastInsertId();
-                welcomeEmail($id,$emailid,$paymenttype);
+                $url = welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid
+                        'emailid'=>$emailid,
+                        'URL'=>$url
                     )
                 );
             }
@@ -114,13 +131,14 @@ function insertUser($pdo)
             if($stmtinsertuser->execute($data_update))
             {
                 $id = $data_update['id'];
-                welcomeEmail($id,$emailid,$paymenttype);
+                $url = welcomeEmail($id,$emailid,$paymenttype);
                 $response = array(
                     "success" => true,
                     "message" => "verification link send on email.",
                     "data" => array(
                         'id'=>$id,
-                        'emailid'=>$emailid
+                        'emailid'=>$emailid,
+                        'URL'=>$url
                     )
                 );
             }
@@ -138,7 +156,7 @@ function insertUser($pdo)
             $response = array(
                 "success" => false,
                 "error" => true,
-                "message" => "user already exists.",
+                "message" => "You have already registered with us.",
                 "data" => array(
                     'userid'=> $resultemailcheck['id']
                 )
@@ -149,75 +167,6 @@ function insertUser($pdo)
     echo json_encode($response);
 }
 
-// function verifyUserfromemail($pdo)
-// {
-//     $data_from_api = json_decode(file_get_contents('php://input'), true);
-//     $userid = isset($data_from_api["userid"]) ? sanitize_data($data_from_api["userid"]) : '';
-//     $data = array(
-//         "userid" => $userid,
-//         "is_active" => 1
-//     );
-
-//     $sql = "SELECT `id` FROM `tbl_users` where `id` = :userid and `is_active` = :is_active";
-//     $stmt = $pdo->prepare($sql);
-//     $stmt->execute($data);
-//     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-//     $today = date("Y-m-d H:i:s");
-//     // print_r($result);
-//     if($result)
-//     {
-//         $sql_update_verify = "UPDATE `tbl_users` SET `is_verify`= '1' WHERE id = :userid and is_active = :is_active ";
-//         $stmt_update_verify = $pdo->prepare($sql_update_verify);
-//         if($stmt_update_verify->execute($data))
-//         {
-//             // # here add payment table to 1 year data
-//             $end_date = date('Y-m-d H:i:s',strtotime('+365 days',strtotime($today)));
-//             $insert_data = array(
-//                 "userid" => $userid,
-//                 "start_date" => $today,
-//                 "end_date" => $end_date
-//             );
-//             $insert_sql = "INSERT INTO `tbl_payment`(`userid`, `start_date`, `end_date`) VALUES (:userid, :start_date, :end_date)";
-//             $insert_stmt = $pdo->prepare($insert_sql);
-//             if($insert_stmt->execute($insert_data))
-//             {
-//                 $insert_data_licences = array(
-//                     "userid" => $userid,
-//                     "license_key" => getlicensekey(),
-//                     "start_date" => $today,
-//                     "end_date" => $end_date
-//                 );
-//                 $insert_sql_licences = "INSERT INTO `tbl_license`(`userid`, `license_key`, `start_date`, `end_date`) VALUES (:userid, :license_key, :start_date, :end_date)";
-//                 $insert_stmt_licences = $pdo->prepare($insert_sql_licences);
-//                 $insert_stmt_licences->execute($insert_data_licences);
-//             }
-//             $response = array(
-//                 "success" => true,
-//                 "message" => "User verify successfully.",
-//                 "data" => NULL
-//             );
-//         }
-//         else
-//         {
-//             $response = array(
-//                 "success" => false,
-//                 "error" => true,
-//                 "message" => "User verify not successfully. pls try again",
-//                 "data" => NULL
-//             );
-//         }
-//     }
-//     else
-//     {
-//         $response = array(
-//             "success" => false,
-//             "error" => true,
-//             "message" => "User not found. pls try again",
-//             "data" => NULL
-//         );
-//     }
-//     echo json_encode($response);
-// }
 
 function getUser($pdo)
 {
@@ -273,7 +222,7 @@ function getUser($pdo)
                     $response = array(
                         "success" => false,
                         "error" => true,
-                        "message" => "User password in Wrong.",
+                        "message" => "Wrong username or password.",
                     );
                 }
             }
@@ -291,7 +240,7 @@ function getUser($pdo)
             $response = array(
                 "success" => false,
                 "error" => true,
-                "message" => "User not found.",
+                "message" => "Wrong username or password.",
             );
         }
     }
@@ -322,13 +271,14 @@ function getforgetPassword($pdo)
 
         if($resultemailcheck)
         {
-            forgotpasswordEmail($resultemailcheck['id'],$email);
+            $url = forgotpasswordEmail($resultemailcheck['id'],$email);
             $response = array(
                 "success" => true,
                 "message" => "forgot password Email sent successfully.",
                 "data" => array(
                     "id" => (int)$resultemailcheck['id'],
-                    "email" => $email
+                    "email" => $email,
+                    "url" => $url
                 )
             );
         }
@@ -336,7 +286,7 @@ function getforgetPassword($pdo)
         {
             $response = array(
                 "success" => false,
-                "message" => "no email in database.",
+                "message" => "The emailid is invalid.",
             );
         }
     }
